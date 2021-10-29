@@ -4,11 +4,12 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"time"
 
-	"github.com/joho/godotenv"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 )
 
 // we can only use string and int safely because we set NOT NULL constraints on all of the columns on the table
@@ -27,7 +28,9 @@ func LoadEnv() {
 	}
 }
 
-func main() {
+var db *sql.DB
+
+func init() {
 	LoadEnv()
 	
 	USER := os.Getenv("DB_USER")
@@ -37,8 +40,9 @@ func main() {
 
 	URL := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local", USER, PASS, HOST, DBNAME)
 
+	var err error
 	// Get a database handle
-	db, err := sql.Open("mysql", URL)
+	db, err = sql.Open("mysql", URL)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -49,6 +53,19 @@ func main() {
 	}
 
 	fmt.Println("connected to DB!")
+}
+
+func main() {
+	http.HandleFunc("/users", usersIndex)
+
+	http.ListenAndServe(":3000", nil)
+}
+
+func usersIndex(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		return
+	}
 
 	rows, err := db.Query("SELECT * FROM users")
 	if err != nil {
@@ -69,10 +86,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-
-
 	for _, user := range users {
 		fmt.Printf("%q, %s, %s, %s", user.ID, user.Name, user.Email, user.Password)
 	}
-
 }
