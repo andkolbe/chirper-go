@@ -57,6 +57,7 @@ func init() {
 
 func main() {
 	http.HandleFunc("/users", usersIndex)
+	http.HandleFunc("/users/show", usersShow)
 
 	http.ListenAndServe(":3000", nil)
 }
@@ -89,4 +90,31 @@ func usersIndex(w http.ResponseWriter, r *http.Request) {
 	for _, user := range users {
 		fmt.Printf("%q, %s, %s, %s", user.ID, user.Name, user.Email, user.Password)
 	}
+}
+
+func usersShow(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		return
+	}
+
+	id := r.FormValue("id")
+	if id == "" {
+		http.Error(w, http.StatusText(400), 400)
+		return 
+	}
+
+	row := db.QueryRow("SELECT * FROM users WHERE id = ?", id)
+
+	user := new(User)
+	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Created_At)
+	if err == sql.ErrNoRows {
+		http.NotFound(w, r)
+		return 
+	} else if err != nil {
+		http.Error(w, http.StatusText(500), 500)
+		return 
+	}
+
+	fmt.Fprintf(w, "%q, %s, %s", user.ID, user.Name, user.Email)
 }
