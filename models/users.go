@@ -6,9 +6,6 @@ import (
 	"time"
 )
 
-var DB *sql.DB
-
-
 // we can only use string and int safely because we set NOT NULL constraints on all of the columns on the table
 type User struct {
 	ID         int       `json:"id"`
@@ -18,8 +15,13 @@ type User struct {
 	Created_At time.Time `json:"created_at"`
 }
 
-func GetAllUsers() ([]User, error) {
-	rows, err := DB.Query("SELECT * FROM users")
+// Create a custom UserModel type which wraps the sql.DB connection pool.
+type UserModel struct {
+	DB *sql.DB
+}
+
+func (m UserModel) GetAllUsers() ([]User, error) {
+	rows, err := m.DB.Query("SELECT * FROM users")
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -44,18 +46,18 @@ func GetAllUsers() ([]User, error) {
 	return users, nil
 }
 
-func GetUserByID(id string) (User, error) {
+// func GetUserByID(id string) (User, error) {
 	
-	row := DB.QueryRow("SELECT * FROM users WHERE id = ?", id)
+// 	row := DB.QueryRow("SELECT * FROM users WHERE id = ?", id)
 
-	var user User
-	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Created_At)
-	if err != nil {
-		log.Fatal(err)
-	}
+// 	var user User
+// 	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Created_At)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	return user, nil
-}
+// 	return user, nil
+// }
 
 // func PostNewUser(user User) {
 	
