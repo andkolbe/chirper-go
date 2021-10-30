@@ -1,25 +1,15 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"time"
 
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/andkolbe/chirper-go/driver"
+	"github.com/andkolbe/chirper-go/models"
 	"github.com/joho/godotenv"
 )
-
-// we can only use string and int safely because we set NOT NULL constraints on all of the columns on the table
-type User struct {
-	ID         int       `json:"id"`
-	Name       string    `json:"name"`
-	Email      string    `json:"email"`
-	Password   string    `json:"password"`
-	Created_At time.Time `json:"created_at"`
-}
 
 func LoadEnv() {
 	err := godotenv.Load(".env")
@@ -28,9 +18,7 @@ func LoadEnv() {
 	}
 }
 
-var db *sql.DB
-
-func init() {
+func main() {
 	LoadEnv()
 	
 	USER := os.Getenv("DB_USER")
@@ -39,53 +27,28 @@ func init() {
 	DBNAME := os.Getenv("DB_NAME")
 
 	URL := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local", USER, PASS, HOST, DBNAME)
-
+	
 	var err error
-	// Get a database handle
-	db, err = sql.Open("mysql", URL)
+	// connect to db
+	models.DB, err = driver.DBConnect(URL)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	// because sql.Open doesn't actually check a connection, we also call DB.Ping() to make sure that everything works OK on startup
-	if err = db.Ping(); err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("connected to DB!")
-}
-
-func main() {
+	
 	http.HandleFunc("/users", usersIndex)
-	http.HandleFunc("/users/show", usersShow)
+	http.HandleFunc("/users/:id", usersShow)
+	// http.HandleFunc("/users/create", usersCreate)
 
 	http.ListenAndServe(":3000", nil)
 }
 
 func usersIndex(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
-	}
-
-	rows, err := db.Query("SELECT * FROM users")
+	users, err := models.GetAllUsers()
 	if err != nil {
-		log.Fatal(err)
-	}
-	defer rows.Close()
-
-	users := make([]*User, 0)
-	for rows.Next() {
-		user := new(User)
-		err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Created_At)
-		if err != nil {
-			log.Fatal(err)
-		}
-		users = append(users, user)
-	}
-	if err = rows.Err(); err != nil {
-		log.Fatal(err)
-	}
+        log.Println(err)
+        http.Error(w, http.StatusText(500), 500)
+        return
+    }
 
 	for _, user := range users {
 		fmt.Printf("%q, %s, %s, %s", user.ID, user.Name, user.Email, user.Password)
@@ -93,28 +56,52 @@ func usersIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func usersShow(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
-	}
-
 	id := r.FormValue("id")
 	if id == "" {
 		http.Error(w, http.StatusText(400), 400)
 		return 
 	}
 
-	row := db.QueryRow("SELECT * FROM users WHERE id = ?", id)
-
-	user := new(User)
-	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Created_At)
-	if err == sql.ErrNoRows {
-		http.NotFound(w, r)
-		return 
-	} else if err != nil {
-		http.Error(w, http.StatusText(500), 500)
-		return 
-	}
+	user, err := models.GetUserByID(id)
+	if err != nil {
+        log.Println(err)
+        http.Error(w, http.StatusText(500), 500)
+        return
+    }
 
 	fmt.Fprintf(w, "%q, %s, %s", user.ID, user.Name, user.Email)
 }
+
+// func usersCreate(w http.ResponseWriter, r *http.Request) {
+// 	if r.Method != "POST" {
+// 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+// 		return
+// 	}
+
+// 	user := models.User{
+// 		Name: r.FormValue("name"), // r.Form.Get("first_name") matches the name="first_name" field on the html page
+// 		Email:     r.FormValue("email"),
+// 		Password:  r.FormValue("password"),
+// 	}
+
+// 	if user.Name == "" || user.Email == "" || user.Password == "" {
+// 		http.Error(w, http.StatusText(400), 400)
+// 		return
+// 	}
+
+// 	user, err := models.PostNewUser(user)
+// 	if err != nil {
+//         log.Println(err)
+//         http.Error(w, http.StatusText(500), 500)
+//         return
+//     }
+
+// 	fmt.Fprintf(w, "%q, %s, %s", user.ID, user.Name, user.Email)
+
+// 	rowsAffected, err := result.RowsAffected()
+// 	if err != nil {
+// 		http.Error(w, http.StatusText(500), 500)
+// 		return
+// 	}
+// 	fmt.Fprintf(w, "User created successfully! (%d row affected)\n", rowsAffected)
+// }
