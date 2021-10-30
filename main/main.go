@@ -13,17 +13,15 @@ import (
 
 func main() {
 	env.LoadEnv()
-
 	PORT := os.Getenv("PORT")
-	
+	URL := os.Getenv("URL")
+	if PORT == "" || URL == "" {
+		log.Fatal("env variables are not set")
+	}
+
 	var err error
 
 	// connect to db
-	USER := os.Getenv("DB_USER")
-	PASS := os.Getenv("DB_PASS")
-	HOST := os.Getenv("DB_HOST")
-	DBNAME := os.Getenv("DB_NAME")
-	URL := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local", USER, PASS, HOST, DBNAME)
 	models.DB, err = driver.DBConnect(URL)
 	if err != nil {
 		log.Fatal(err)
