@@ -6,10 +6,10 @@ import (
 	"github.com/go-chi/chi"
 )
 
-func routes(env *Env) http.Handler {
+func routes(repo *Repository) http.Handler {
 	mux := chi.NewRouter()
 
-	mux.Get("/users", env.usersIndex)
+	mux.Get("/users", repo.usersIndex)
 	// mux.Get("/users/:id", usersShow)
 	// http.HandleFunc("/users/create", usersCreate)
 
