@@ -13,26 +13,27 @@ import (
 
 func main() {
 	env.LoadEnv()
+
+	PORT := os.Getenv("PORT")
 	
 	var err error
 
+	// connect to db
 	USER := os.Getenv("DB_USER")
 	PASS := os.Getenv("DB_PASS")
 	HOST := os.Getenv("DB_HOST")
 	DBNAME := os.Getenv("DB_NAME")
-
-	// connect to db
 	URL := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local", USER, PASS, HOST, DBNAME)
 	models.DB, err = driver.DBConnect(URL)
 	if err != nil {
 		log.Fatal(err)
 	}
 	
-	http.HandleFunc("/users", usersIndex)
-	http.HandleFunc("/users/:id", usersShow)
-	// http.HandleFunc("/users/create", usersCreate)
+	mux := routes()
 
-	http.ListenAndServe(":3000", nil)
+	log.Println("Starting web server")
+
+	http.ListenAndServe(":"+PORT, mux)
 }
 
 func usersIndex(w http.ResponseWriter, r *http.Request) {
