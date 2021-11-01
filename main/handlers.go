@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/andkolbe/chirper-go/internal/models"
+	"github.com/gorilla/mux"
 )
 
 // All the dependencies for our handlers are explicitly defined in one place
@@ -14,7 +15,7 @@ type Repository struct {
 }
 
 // sends a HTTP response listing all users
-func (repo *Repository) usersIndex(w http.ResponseWriter, r *http.Request) {
+func (repo *Repository) ShowAllUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := repo.users.GetAllUsers()
 	if err != nil {
         log.Println(err)
@@ -23,12 +24,13 @@ func (repo *Repository) usersIndex(w http.ResponseWriter, r *http.Request) {
     }
 
 	for _, user := range users {
-		fmt.Printf("%q, %s, %s, %s", user.ID, user.Name, user.Email, user.Password)
+		fmt.Fprintf(w, "%s, %s", user.Name, user.Email)
 	}
 }
 
-func (repo *Repository) usersShow(w http.ResponseWriter, r *http.Request) {
-	id := r.FormValue("id")
+func (repo *Repository) ShowOneUserByID(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
 	if id == "" {
 		http.Error(w, http.StatusText(400), 400)
 		return 
@@ -41,7 +43,7 @@ func (repo *Repository) usersShow(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-	fmt.Fprintf(w, "%q, %s, %s", user.ID, user.Name, user.Email)
+	fmt.Fprintf(w, "%s, %s", user.Name, user.Email)
 }
 
 // func usersCreate(w http.ResponseWriter, r *http.Request) {

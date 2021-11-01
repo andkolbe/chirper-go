@@ -7,11 +7,11 @@ import (
 )
 
 func routes(repo *Repository) http.Handler {
-	mux := mux.NewRouter()
+	router := mux.NewRouter()
 
-	mux.HandleFunc("/users", repo.usersIndex).Methods("GET")
-	mux.HandleFunc("/users/{id}", repo.usersShow).Methods("GET")
+	router.HandleFunc("/users", repo.ShowAllUsers).Methods("GET")
+	router.HandleFunc("/users/{id}", repo.ShowOneUserByID).Methods("GET")
 	// http.HandleFunc("/users/create", usersCreate)
 
-	return mux
+	return router
 }
