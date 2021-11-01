@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -23,9 +24,10 @@ func (repo *Repository) GetAllUsersHandler(w http.ResponseWriter, r *http.Reques
         return
     }
 
-	for _, user := range users {
-		fmt.Fprintf(w, "%s, %s", user.Name, user.Email)
-	}
+	// set the response header to send back json
+	w.Header().Set("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode(users)
 }
 
 func (repo *Repository) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
