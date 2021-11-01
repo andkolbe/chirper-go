@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -31,7 +30,9 @@ func (repo *Repository) GetAllUsersHandler(w http.ResponseWriter, r *http.Reques
 }
 
 func (repo *Repository) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
+	// get and store any params on the request in a variable 
 	vars := mux.Vars(r)
+	// pull the id out of the Vars map
 	id := vars["id"]
 	if id == "" {
 		http.Error(w, http.StatusText(400), 400)
@@ -45,7 +46,9 @@ func (repo *Repository) GetUserByIDHandler(w http.ResponseWriter, r *http.Reques
         return
     }
 
-	fmt.Fprintf(w, "%s, %s", user.Name, user.Email)
+	w.Header().Set("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode(user)
 }
 
 func (repo *Repository) CreateNewUserHandler(w http.ResponseWriter, r *http.Request) {
