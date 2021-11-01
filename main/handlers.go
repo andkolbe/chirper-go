@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -32,7 +33,7 @@ func (repo *Repository) GetAllUsersHandler(w http.ResponseWriter, r *http.Reques
 func (repo *Repository) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 	// get and store any params on the request in a variable 
 	vars := mux.Vars(r)
-	// pull the id out of the Vars map
+	// pull the id value out of the Vars map
 	id := vars["id"]
 	if id == "" {
 		http.Error(w, http.StatusText(400), 400)
@@ -47,31 +48,29 @@ func (repo *Repository) GetUserByIDHandler(w http.ResponseWriter, r *http.Reques
     }
 
 	w.Header().Set("Content-Type", "application/json")
-
 	json.NewEncoder(w).Encode(user)
 }
 
 func (repo *Repository) CreateNewUserHandler(w http.ResponseWriter, r *http.Request) {
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+        log.Println(err)
+        http.Error(w, http.StatusText(500), 500)
+        return
+    }
 
-	// user := models.User{
-	// 	Name: r.FormValue("name"), // r.Form.Get("first_name") matches the name="first_name" field on the html page
-	// 	Email:     r.FormValue("email"),
-	// 	Password:  r.FormValue("password"),
-	// }
+	var user models.User
+	// unmarshal the JSON data retrieved from the body into the new user instance 
+	json.Unmarshal(reqBody, &user)
 
-	// if user.Name == "" || user.Email == "" || user.Password == "" {
-	// 	http.Error(w, http.StatusText(400), 400)
-	// 	return
-	// }
+	repo.users.CreateNewUser(user)
+	
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(user)
+	w.Write([]byte("user created"))
 
-	// user, err := repo.users.PostNewUser(user)
-	// if err != nil {
-    //     log.Println(err)
-    //     http.Error(w, http.StatusText(500), 500)
-    //     return
-    // }
 
-	// fmt.Fprintf(w, "%q, %s, %s", user.ID, user.Name, user.Email)
 
 	// rowsAffected, err := result.RowsAffected()
 	// if err != nil {
@@ -81,10 +80,29 @@ func (repo *Repository) CreateNewUserHandler(w http.ResponseWriter, r *http.Requ
 	// fmt.Fprintf(w, "User created successfully! (%d row affected)\n", rowsAffected)
 }
 
-func (repo *Repository) UpdateUserHandler (w http.ResponseWriter, r *http.Request) {
+// func (repo *Repository) UpdateUserHandler (w http.ResponseWriter, r *http.Request) {
+// 	vars := mux.Vars(r)
+// id := vars["id"]
+// 	if id == "" {
+// 		http.Error(w, http.StatusText(400), 400)
+// 		return 
+// 	}
 
-}
+// 	w.Header().Set("Content-Type", "application/json")
+// 	json.NewEncoder(w).Encode(user)
+// }
 
 func (repo *Repository) DeleteUserHandler (w http.ResponseWriter, r *http.Request) {
-	
+	vars := mux.Vars(r)
+	id := vars["id"]
+	if id == "" {
+		http.Error(w, http.StatusText(400), 400)
+		return 
+	}
+
+	repo.users.DeleteUser(id)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("user deleted"))
 }

@@ -70,16 +70,17 @@ func (m UserModel) CreateNewUser(user User) {
 	}
 }
 
-// func UpdateUser() {
-// 	_, err := DB.Exec("UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?", name, email, password, id)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// }
+func (m UserModel) UpdateUser(user User) {
+	_, err := m.DB.Exec("UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?", &user.Name, &user.Email, &user.Password, &user.ID)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
-// func DeleteUser() {
-// 	_, err := DB.Exec("DELETE FROM users WHERE id = ?", id)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// }
+func (m UserModel) DeleteUser(id string) {
+	_, err := m.DB.Exec("DELETE FROM users WHERE id = ?", id)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+}
