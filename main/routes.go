@@ -3,14 +3,14 @@ package main
 import (
 	"net/http"
 
-	"github.com/go-chi/chi"
+	"github.com/gorilla/mux"
 )
 
 func routes(repo *Repository) http.Handler {
-	mux := chi.NewRouter()
+	mux := mux.NewRouter()
 
-	mux.Get("/users", repo.usersIndex)
-	// mux.Get("/users/:id", usersShow)
+	mux.HandleFunc("/users", repo.usersIndex).Methods("GET")
+	mux.HandleFunc("/users/{id}", repo.usersShow).Methods("GET")
 	// http.HandleFunc("/users/create", usersCreate)
 
 	return mux

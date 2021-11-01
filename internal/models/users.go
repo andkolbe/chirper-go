@@ -15,11 +15,12 @@ type User struct {
 	Created_At time.Time `json:"created_at"`
 }
 
-// Create a custom UserModel type which wraps the sql.DB connection pool.
+// Create a custom UserModel type which wraps the sql.DB connection pool
 type UserModel struct {
 	DB *sql.DB
 }
 
+// Use a method on the custom UserModel type to run the SQL query.
 func (m UserModel) GetAllUsers() ([]User, error) {
 	rows, err := m.DB.Query("SELECT * FROM users")
 	if err != nil {
@@ -46,18 +47,18 @@ func (m UserModel) GetAllUsers() ([]User, error) {
 	return users, nil
 }
 
-// func GetUserByID(id string) (User, error) {
+func (m UserModel) GetUserByID(id string) (User, error) {
 	
-// 	row := DB.QueryRow("SELECT * FROM users WHERE id = ?", id)
+	row := m.DB.QueryRow("SELECT * FROM users WHERE id = ?", id)
 
-// 	var user User
-// 	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Created_At)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
+	var user User
+	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Created_At)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-// 	return user, nil
-// }
+	return user, nil
+}
 
 // func PostNewUser(user User) {
 	

@@ -10,11 +10,6 @@ import (
 	"github.com/andkolbe/chirper-go/internal/models"
 )
 
-// All the dependencies for our handlers are explicitly defined in one place
-type Repository struct {
-    users models.UserModel
-}
-
 func main() {
 	env.LoadEnv()
 	PORT := os.Getenv("PORT")
@@ -22,8 +17,6 @@ func main() {
 	if PORT == "" || URL == "" {
 		log.Fatal("env variables are not set")
 	}
-
-	var err error
 
 	// connect to db
 	db, err := driver.DBConnect(URL)
@@ -38,8 +31,5 @@ func main() {
 
 	mux := routes(repo)
 
-	log.Println("Starting web server")
-
 	http.ListenAndServe(":"+PORT, mux)
 }
-

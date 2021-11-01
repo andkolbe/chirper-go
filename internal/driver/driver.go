@@ -8,16 +8,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// holds the database connection pool
-// if we wanted to add other types of databases, we could add them here too
-// type DB struct {
-// 	SQL *sql.DB
-// }
-
-const maxOpenDBConn = 10
-const maxIdleDBConn = 5
-const maxDBLifeTime = 5 * time.Minute
-
 // creates a new database for the application
 func DBConnect(dsn string) (*sql.DB, error) {
 	db, err := sql.Open("mysql", dsn)
@@ -34,9 +24,9 @@ func DBConnect(dsn string) (*sql.DB, error) {
 
 	log.Println("Pinged db!")
 
-	db.SetMaxOpenConns(maxOpenDBConn)
-	db.SetConnMaxIdleTime(maxIdleDBConn)
-	db.SetConnMaxLifetime(maxDBLifeTime)
+	db.SetMaxOpenConns(10)
+	db.SetConnMaxIdleTime(5)
+	db.SetConnMaxLifetime(5 * time.Minute)
 
 	return db, nil
 }
