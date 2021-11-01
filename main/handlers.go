@@ -15,7 +15,7 @@ type Repository struct {
 }
 
 // sends a HTTP response listing all users
-func (repo *Repository) ShowAllUsers(w http.ResponseWriter, r *http.Request) {
+func (repo *Repository) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 	users, err := repo.users.GetAllUsers()
 	if err != nil {
         log.Println(err)
@@ -28,7 +28,7 @@ func (repo *Repository) ShowAllUsers(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (repo *Repository) ShowOneUserByID(w http.ResponseWriter, r *http.Request) {
+func (repo *Repository) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 	if id == "" {
@@ -46,36 +46,40 @@ func (repo *Repository) ShowOneUserByID(w http.ResponseWriter, r *http.Request) 
 	fmt.Fprintf(w, "%s, %s", user.Name, user.Email)
 }
 
-// func usersCreate(w http.ResponseWriter, r *http.Request) {
-// 	if r.Method != "POST" {
-// 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-// 		return
-// 	}
+func (repo *Repository) CreateNewUserHandler(w http.ResponseWriter, r *http.Request) {
 
-// 	user := models.User{
-// 		Name: r.FormValue("name"), // r.Form.Get("first_name") matches the name="first_name" field on the html page
-// 		Email:     r.FormValue("email"),
-// 		Password:  r.FormValue("password"),
-// 	}
+	// user := models.User{
+	// 	Name: r.FormValue("name"), // r.Form.Get("first_name") matches the name="first_name" field on the html page
+	// 	Email:     r.FormValue("email"),
+	// 	Password:  r.FormValue("password"),
+	// }
 
-// 	if user.Name == "" || user.Email == "" || user.Password == "" {
-// 		http.Error(w, http.StatusText(400), 400)
-// 		return
-// 	}
+	// if user.Name == "" || user.Email == "" || user.Password == "" {
+	// 	http.Error(w, http.StatusText(400), 400)
+	// 	return
+	// }
 
-// 	user, err := models.PostNewUser(user)
-// 	if err != nil {
-//         log.Println(err)
-//         http.Error(w, http.StatusText(500), 500)
-//         return
-//     }
+	// user, err := repo.users.PostNewUser(user)
+	// if err != nil {
+    //     log.Println(err)
+    //     http.Error(w, http.StatusText(500), 500)
+    //     return
+    // }
 
-// 	fmt.Fprintf(w, "%q, %s, %s", user.ID, user.Name, user.Email)
+	// fmt.Fprintf(w, "%q, %s, %s", user.ID, user.Name, user.Email)
 
-// 	rowsAffected, err := result.RowsAffected()
-// 	if err != nil {
-// 		http.Error(w, http.StatusText(500), 500)
-// 		return
-// 	}
-// 	fmt.Fprintf(w, "User created successfully! (%d row affected)\n", rowsAffected)
-// }
+	// rowsAffected, err := result.RowsAffected()
+	// if err != nil {
+	// 	http.Error(w, http.StatusText(500), 500)
+	// 	return
+	// }
+	// fmt.Fprintf(w, "User created successfully! (%d row affected)\n", rowsAffected)
+}
+
+func (repo *Repository) UpdateUserHandler (w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (repo *Repository) DeleteUserHandler (w http.ResponseWriter, r *http.Request) {
+	
+}

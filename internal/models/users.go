@@ -8,7 +8,7 @@ import (
 
 // we can only use string and int safely because we set NOT NULL constraints on all of the columns on the table
 type User struct {
-	ID         int       `json:"id"`
+	ID         string       `json:"id"`
 	Name       string    `json:"name"`
 	Email      string    `json:"email"`
 	Password   string    `json:"password"`
@@ -60,13 +60,15 @@ func (m UserModel) GetUserByID(id string) (User, error) {
 	return user, nil
 }
 
-// func PostNewUser(user User) {
+func (m UserModel) CreateNewUser(user User) {
+
+	// add password hashing 
 	
-// 	_, err := DB.Exec("INSERT INTO users VALUES(?, ?, ?)", name, email, password)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// }
+	_, err := m.DB.Exec("INSERT INTO users (name, email, password) VALUES(?, ?, ?)", &user.Name, &user.Email, &user.Password)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
 // func UpdateUser() {
 // 	_, err := DB.Exec("UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?", name, email, password, id)
