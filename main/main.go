@@ -26,7 +26,7 @@ func main() {
 	}
 	
 	// Initalise an instance of Repository with a models.UserModel instance (which in turn wraps the connection pool)
-	repo := handlers.NewRepo(models.UserModel{DB: db})
+	repo := handlers.NewRepo(models.DBModel{DB: db})
 
 	mux := routes(repo)
 

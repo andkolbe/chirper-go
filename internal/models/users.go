@@ -20,13 +20,13 @@ type User struct {
 }
 
 // Create a custom UserModel type which wraps the sql.DB connection pool
-type UserModel struct {
+type DBModel struct {
 	DB *sql.DB
 }
 
 // GET All Users
 // Use a method on the custom UserModel type to run the SQL query
-func (m UserModel) GetAllUsers() ([]User, error) {
+func (m DBModel) GetAllUsers() ([]User, error) {
 	// fetch a result set from the userss table using the DB.Query() method and assign it to a rows variable
 	rows, err := m.DB.Query("SELECT * FROM users")
 	if err != nil {
@@ -66,7 +66,7 @@ func (m UserModel) GetAllUsers() ([]User, error) {
 }
 
 // GET One User
-func (m UserModel) GetUserByID(id string) (User, error) {
+func (m DBModel) GetUserByID(id string) (User, error) {
 
 	// Because we need to include untrusted input (the id variable) in our SQL query, we take advantage of placeholder parameters, passing in the value of our 
 	// placeholder as the second argument to DB.QueryRow()
@@ -88,7 +88,7 @@ func (m UserModel) GetUserByID(id string) (User, error) {
 }
 
 // POST
-func (m UserModel) CreateNewUser(user User) int64 {
+func (m DBModel) CreateNewUser(user User) int64 {
 
 	// CreateHash returns a Argon2id hash of a plain-text password using the provided algorithm parameters
 	hash, err := argon2id.CreateHash(user.Password, argon2id.DefaultParams)
@@ -115,7 +115,7 @@ func (m UserModel) CreateNewUser(user User) int64 {
 }
 
 // PUT
-func (m UserModel) UpdateUser(user User, id string) int64 {
+func (m DBModel) UpdateUser(user User, id string) int64 {
 	res, err := m.DB.Exec("UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?", &user.Name, &user.Email, &user.Password, id)
 	if err != nil {
 		log.Fatal(err)
@@ -132,7 +132,7 @@ func (m UserModel) UpdateUser(user User, id string) int64 {
 }
 
 // DELETE
-func (m UserModel) DeleteUser(id string) int64{
+func (m DBModel) DeleteUser(id string) int64{
 	res, err := m.DB.Exec("DELETE FROM users WHERE id = ?", id)
 	if err != nil {
 		log.Fatal(err)

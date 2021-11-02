@@ -13,7 +13,7 @@ import (
 
 // GET /users
 func (repo *Repository) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
-	users, err := repo.users.GetAllUsers()
+	users, err := repo.dbmodel.GetAllUsers()
 	if err != nil {
 		log.Println(err)
 		http.Error(w, http.StatusText(500), 500)
@@ -40,7 +40,7 @@ func (repo *Repository) GetUserByIDHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	user, err := repo.users.GetUserByID(id)
+	user, err := repo.dbmodel.GetUserByID(id)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, http.StatusText(500), 500)
@@ -58,7 +58,7 @@ func (repo *Repository) CreateNewUserHandler(w http.ResponseWriter, r *http.Requ
 	// the http.Request body is an io.Reader
 	json.NewDecoder(r.Body).Decode(&user)
 
-	insertID := repo.users.CreateNewUser(user)
+	insertID := repo.dbmodel.CreateNewUser(user)
 
 	res := response {
 		ID: insertID,
@@ -83,7 +83,7 @@ func (repo *Repository) UpdateUserHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	updatedRows := repo.users.UpdateUser(user, id)
+	updatedRows := repo.dbmodel.UpdateUser(user, id)
 
 	msg := fmt.Sprintf("User updated successfully. Total rows affected %v", updatedRows)
 	intID, _ := strconv.Atoi(id)
@@ -104,7 +104,7 @@ func (repo *Repository) DeleteUserHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	deletedRows := repo.users.DeleteUser(id)
+	deletedRows := repo.dbmodel.DeleteUser(id)
 
 	msg := fmt.Sprintf("User deleted successfully. Total rows affected %v", deletedRows)
 	intID, _ := strconv.Atoi(id)

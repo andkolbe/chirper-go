@@ -8,14 +8,14 @@ import "github.com/andkolbe/chirper-go/internal/models"
 // All the dependencies for our handlers are explicitly defined in one place
 // models.UserModel is a dependency of the Repository struct
 type Repository struct {
-	users models.UserModel
+	dbmodel models.DBModel
 }
 
 // creates a new repository
 // the Repository type is populated with all of the info received as parameters and it handed back as a pointer to Repository
-func NewRepo(u models.UserModel) *Repository {
+func NewRepo(dbmod models.DBModel) *Repository {
 	return &Repository{
-		users: u,
+		dbmodel: dbmod,
 	}
 }
 
