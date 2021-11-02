@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"encoding/json"
@@ -10,21 +10,6 @@ import (
 	"github.com/andkolbe/chirper-go/internal/models"
 	"github.com/gorilla/mux"
 )
-
-// A handler responds to an HTTP request
-// It is responsible for writing response headers and bodies
-
-// All the dependencies for our handlers are explicitly defined in one place
-// models.UserModel is a dependency of the Repository struct 
-type Repository struct {
-	users models.UserModel
-}
-
-// response format
-type response struct {
-    ID      int64  `json:"id,omitempty"`
-    Message string `json:"message,omitempty"`
-}
 
 // GET /users
 func (repo *Repository) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {

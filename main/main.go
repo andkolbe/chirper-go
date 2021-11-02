@@ -7,6 +7,7 @@ import (
 
 	"github.com/andkolbe/chirper-go/internal/driver"
 	"github.com/andkolbe/chirper-go/internal/env"
+	"github.com/andkolbe/chirper-go/internal/handlers"
 	"github.com/andkolbe/chirper-go/internal/models"
 )
 
@@ -24,10 +25,8 @@ func main() {
 		log.Fatal(err)
 	}
 	
-	// Initalise Repository with a models.UserModel instance (which in turn wraps the connection pool)
-    repo := &Repository{
-		users: models.UserModel{DB: db},
-	}
+	// Initalise an instance of Repository with a models.UserModel instance (which in turn wraps the connection pool)
+	repo := handlers.NewRepo(models.UserModel{DB: db})
 
 	mux := routes(repo)
 

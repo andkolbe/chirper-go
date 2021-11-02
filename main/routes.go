@@ -3,10 +3,11 @@ package main
 import (
 	"net/http"
 
+	"github.com/andkolbe/chirper-go/internal/handlers"
 	"github.com/gorilla/mux"
 )
 
-func routes(repo *Repository) http.Handler {
+func routes(repo *handlers.Repository) http.Handler {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/users", repo.GetAllUsersHandler).Methods("GET")
