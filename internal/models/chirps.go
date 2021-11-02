@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"log"
 	"time"
 )
@@ -52,4 +53,21 @@ func (m DBModel) GetChirpByID(id string) (Chirp, error) {
 	}
 
 	return chirp, nil
+}
+
+// POST
+func (m DBModel) CreateNewChirp(chirp Chirp) int64 {
+	res, err := m.DB.Exec("INSERT INTO chirps (userid, content, location) VALUES(?, ?, ?)", &chirp.UserID, &chirp.Content, &chirp.Location)
+	if err != nil {
+		log.Fatalf("Unable to execute the query. %v", err)
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0
+	}
+
+	fmt.Printf("Inserted a single record %v", id)
+
+	return id
 }
