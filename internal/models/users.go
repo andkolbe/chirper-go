@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"time"
 )
@@ -60,27 +61,51 @@ func (m UserModel) GetUserByID(id string) (User, error) {
 	return user, nil
 }
 
-func (m UserModel) CreateNewUser(user User) {
+func (m UserModel) CreateNewUser(user User) int64 {
 
 	// add password hashing
 
-	_, err := m.DB.Exec("INSERT INTO users (name, email, password) VALUES(?, ?, ?)", &user.Name, &user.Email, &user.Password)
+	res, err := m.DB.Exec("INSERT INTO users (name, email, password) VALUES(?, ?, ?)", &user.Name, &user.Email, &user.Password)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Unable to execute the query. %v", err)
 	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0
+	}
+
+	fmt.Printf("Inserted a single record %v", id)
+
+	return id
 }
 
-func (m UserModel) UpdateUser(user User, id string) {
-	_, err := m.DB.Exec("UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?", &user.Name, &user.Email, &user.Password, id)
+func (m UserModel) UpdateUser(user User, id string) int64 {
+	res, err := m.DB.Exec("UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?", &user.Name, &user.Email, &user.Password, id)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+        log.Fatalf("Error while checking the affected rows. %v", err)
+	}
+	fmt.Printf("Total rows/record affected %v", rowsAffected)
+
+	return rowsAffected
 }
 
-func (m UserModel) DeleteUser(id string) {
-	_, err := m.DB.Exec("DELETE FROM users WHERE id = ?", id)
+func (m UserModel) DeleteUser(id string) int64{
+	res, err := m.DB.Exec("DELETE FROM users WHERE id = ?", id)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	rowsAffected, err := res.RowsAffected()
+    if err != nil {
+        log.Fatalf("Error while checking the affected rows. %v", err)
+    }
+    fmt.Printf("Total rows/record affected %v", rowsAffected)
+
+    return rowsAffected
 }
