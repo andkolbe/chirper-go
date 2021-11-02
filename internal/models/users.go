@@ -8,11 +8,11 @@ import (
 
 // we can only use string and int safely because we set NOT NULL constraints on all of the columns on the table
 type User struct {
-	ID         string       `json:"id"`
+	ID         string    `json:"id"`
 	Name       string    `json:"name"`
 	Email      string    `json:"email"`
 	Password   string    `json:"password"`
-	Created_At time.Time `json:"created_at"`
+	Created_At time.Time `json:"-"`
 }
 
 // Create a custom UserModel type which wraps the sql.DB connection pool
@@ -48,7 +48,7 @@ func (m UserModel) GetAllUsers() ([]User, error) {
 }
 
 func (m UserModel) GetUserByID(id string) (User, error) {
-	
+
 	row := m.DB.QueryRow("SELECT * FROM users WHERE id = ?", id)
 
 	var user User
@@ -62,8 +62,8 @@ func (m UserModel) GetUserByID(id string) (User, error) {
 
 func (m UserModel) CreateNewUser(user User) {
 
-	// add password hashing 
-	
+	// add password hashing
+
 	_, err := m.DB.Exec("INSERT INTO users (name, email, password) VALUES(?, ?, ?)", &user.Name, &user.Email, &user.Password)
 	if err != nil {
 		log.Fatal(err)

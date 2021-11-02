@@ -31,5 +31,5 @@ func main() {
 
 	mux := routes(repo)
 
-	http.ListenAndServe(":"+PORT, mux)
+	http.ListenAndServe("127.0.0.1:"+PORT, mux)
 }
