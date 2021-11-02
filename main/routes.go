@@ -17,6 +17,8 @@ func routes(repo *handlers.Repository) http.Handler {
 	router.HandleFunc("/users/{id}", repo.DeleteUserHandler).Methods("DELETE")
 
 	router.HandleFunc("/chirps", repo.GetAllChirpsHandler).Methods("GET")
+	router.HandleFunc("/chirps/{id}", repo.GetChirpByIDHandler).Methods("GET")
+
 
 	return router
 }

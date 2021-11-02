@@ -19,7 +19,7 @@ type User struct {
 	Created_At time.Time `json:"-"`
 }
 
-// Create a custom UserModel type which wraps the sql.DB connection pool
+// Create a custom DBModel type which wraps the sql.DB connection pool
 type DBModel struct {
 	DB *sql.DB
 }

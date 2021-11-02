@@ -40,3 +40,16 @@ func (m DBModel) GetAllChirps() ([]Chirp, error) {
 
 	return chirps, nil
 }
+
+// GET One User
+func (m DBModel) GetChirpByID(id string) (Chirp, error) {
+	row := m.DB.QueryRow("SELECT * FROM chirps WHERE id = ?", id)
+
+	var chirp Chirp
+	err := row.Scan(&chirp.ID, &chirp.UserID, &chirp.Content, &chirp.Location, &chirp.Created_At)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return chirp, nil
+}
