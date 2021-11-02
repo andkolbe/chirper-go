@@ -12,8 +12,10 @@ import (
 )
 
 // A handler responds to an HTTP request
+// It is responsible for writing response headers and bodies
 
 // All the dependencies for our handlers are explicitly defined in one place
+// models.UserModel is a dependency of the Repository struct 
 type Repository struct {
 	users models.UserModel
 }

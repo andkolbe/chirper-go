@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"time"
+
+	"github.com/alexedwards/argon2id"
 )
 
 // we can only use string and int safely because we set NOT NULL constraints on all of the columns on the table
@@ -22,8 +24,8 @@ type UserModel struct {
 	DB *sql.DB
 }
 
-// Use a method on the custom UserModel type to run the SQL query.
 // GET All Users
+// Use a method on the custom UserModel type to run the SQL query
 func (m UserModel) GetAllUsers() ([]User, error) {
 	// fetch a result set from the userss table using the DB.Query() method and assign it to a rows variable
 	rows, err := m.DB.Query("SELECT * FROM users")
@@ -88,11 +90,15 @@ func (m UserModel) GetUserByID(id string) (User, error) {
 // POST
 func (m UserModel) CreateNewUser(user User) int64 {
 
-	// add password hashing
+	// CreateHash returns a Argon2id hash of a plain-text password using the provided algorithm parameters
+	hash, err := argon2id.CreateHash(user.Password, argon2id.DefaultParams)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// DB.Exec(), like DB.Query() and DB.QueryRow(), is a variadic function, which means you can pass in as many parameters as you need
 	// The db.Exec() method returns an object satisfying the sql.Result interface, which you can either use or discard with the blank identifier
-	res, err := m.DB.Exec("INSERT INTO users (name, email, password) VALUES(?, ?, ?)", &user.Name, &user.Email, &user.Password)
+	res, err := m.DB.Exec("INSERT INTO users (name, email, password) VALUES(?, ?, ?)", &user.Name, &user.Email, hash)
 	if err != nil {
 		log.Fatalf("Unable to execute the query. %v", err)
 	}
