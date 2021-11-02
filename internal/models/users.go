@@ -70,8 +70,8 @@ func (m UserModel) CreateNewUser(user User) {
 	}
 }
 
-func (m UserModel) UpdateUser(user User) {
-	_, err := m.DB.Exec("UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?", &user.Name, &user.Email, &user.Password, &user.ID)
+func (m UserModel) UpdateUser(user User, id string) {
+	_, err := m.DB.Exec("UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?", &user.Name, &user.Email, &user.Password, id)
 	if err != nil {
 		log.Fatal(err)
 	}

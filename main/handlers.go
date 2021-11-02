@@ -26,12 +26,12 @@ func (repo *Repository) GetAllUsersHandler(w http.ResponseWriter, r *http.Reques
 
 	// set the response header to send back json
 	w.Header().Set("Content-Type", "application/json")
-
+	// send all the users as response
 	json.NewEncoder(w).Encode(users)
 }
 
 func (repo *Repository) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
-	// get and store any params on the request in a variable 
+	// get and store any params on the request
 	vars := mux.Vars(r)
 	// pull the id value out of the Vars map
 	id := vars["id"]
@@ -80,17 +80,24 @@ func (repo *Repository) CreateNewUserHandler(w http.ResponseWriter, r *http.Requ
 	// fmt.Fprintf(w, "User created successfully! (%d row affected)\n", rowsAffected)
 }
 
-// func (repo *Repository) UpdateUserHandler (w http.ResponseWriter, r *http.Request) {
-// 	vars := mux.Vars(r)
-// id := vars["id"]
-// 	if id == "" {
-// 		http.Error(w, http.StatusText(400), 400)
-// 		return 
-// 	}
+func (repo *Repository) UpdateUserHandler (w http.ResponseWriter, r *http.Request) {
+	reqBody, _ := ioutil.ReadAll(r.Body)
+	var user models.User
+	json.Unmarshal(reqBody, &user)	
 
-// 	w.Header().Set("Content-Type", "application/json")
-// 	json.NewEncoder(w).Encode(user)
-// }
+	vars := mux.Vars(r)
+	id := vars["id"]
+	if id == "" {
+		http.Error(w, http.StatusText(400), 400)
+		return 
+	}
+
+	repo.users.UpdateUser(user, id)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(user)
+}
 
 func (repo *Repository) DeleteUserHandler (w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
