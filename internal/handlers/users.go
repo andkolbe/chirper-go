@@ -31,7 +31,7 @@ func (repo *Repository) GetAllUsersHandler(w http.ResponseWriter, r *http.Reques
 
 // GET /users/{id}
 func (repo *Repository) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
-	// get and store any params on the request
+	// read and store any variable specified on the route on the request
 	vars := mux.Vars(r)
 	// pull the id value out of the Vars map
 	id := vars["id"]

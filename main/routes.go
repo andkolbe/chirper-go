@@ -10,17 +10,19 @@ import (
 func routes(repo *handlers.Repository) http.Handler {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/users", repo.GetAllUsersHandler).Methods("GET")
-	router.HandleFunc("/users/{id}", repo.GetUserByIDHandler).Methods("GET")
-	router.HandleFunc("/users", repo.CreateNewUserHandler).Methods("POST")
-	router.HandleFunc("/users/{id}", repo.UpdateUserHandler).Methods("PUT")
-	router.HandleFunc("/users/{id}", repo.DeleteUserHandler).Methods("DELETE")
+	u := router.PathPrefix("/users").Subrouter()
+	u.HandleFunc("/", repo.GetAllUsersHandler).Methods("GET")
+	u.HandleFunc("/{id}", repo.GetUserByIDHandler).Methods("GET")
+	u.HandleFunc("/", repo.CreateNewUserHandler).Methods("POST")
+	u.HandleFunc("/{id}", repo.UpdateUserHandler).Methods("PUT")
+	u.HandleFunc("/{id}", repo.DeleteUserHandler).Methods("DELETE")
 
-	router.HandleFunc("/chirps", repo.GetAllChirpsHandler).Methods("GET")
-	router.HandleFunc("/chirps/{id}", repo.GetChirpByIDHandler).Methods("GET")
-	router.HandleFunc("/chirps", repo.CreateNewChirpHandler).Methods("POST")
-	router.HandleFunc("/chirps/{id}", repo.UpdateChirpHandler).Methods("PUT")
-	router.HandleFunc("/chirps/{id}", repo.DeleteChirpHandler).Methods("DELETE")
+	c := router.PathPrefix("/chirps").Subrouter()
+	c.HandleFunc("/", repo.GetAllChirpsHandler).Methods("GET")
+	c.HandleFunc("/{id}", repo.GetChirpByIDHandler).Methods("GET")
+	c.HandleFunc("/", repo.CreateNewChirpHandler).Methods("POST")
+	c.HandleFunc("/{id}", repo.UpdateChirpHandler).Methods("PUT")
+	c.HandleFunc("/{id}", repo.DeleteChirpHandler).Methods("DELETE")
 
 	return router
 }
