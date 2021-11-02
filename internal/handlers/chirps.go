@@ -85,3 +85,26 @@ func (repo *Repository) UpdateChirpHandler(w http.ResponseWriter, r *http.Reques
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(res)
 }
+
+// DELETE /users/{id}
+func (repo *Repository) DeleteChirpHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	if id == "" {
+		http.Error(w, http.StatusText(400), 400)
+		return
+	}
+
+	deletedRows := repo.dbmodel.DeleteChirp(id)
+
+	msg := fmt.Sprintf("Chirp deleted successfully. Total rows affected %v", deletedRows)
+	intID, _ := strconv.Atoi(id)
+
+	res := response{
+        ID:      int64(intID),
+        Message: msg,
+    }
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(res)
+}

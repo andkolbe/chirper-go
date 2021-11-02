@@ -87,3 +87,19 @@ func (m DBModel) UpdateChirp(chirp Chirp, id string) int64 {
 
 	return rowsAffected
 }
+
+// DELETE
+func (m DBModel) DeleteChirp(id string) int64{
+	res, err := m.DB.Exec("DELETE FROM chirps WHERE id = ?", id)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	rowsAffected, err := res.RowsAffected()
+    if err != nil {
+        log.Fatalf("Error while checking the affected rows. %v", err)
+    }
+    fmt.Printf("Total rows/record affected %v", rowsAffected)
+
+    return rowsAffected
+}
