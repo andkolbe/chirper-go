@@ -71,3 +71,19 @@ func (m DBModel) CreateNewChirp(chirp Chirp) int64 {
 
 	return id
 }
+
+// PUT
+func (m DBModel) UpdateChirp(chirp Chirp, id string) int64 {
+	res, err := m.DB.Exec("UPDATE chirps SET userid = ?, content = ?, location = ? WHERE id = ?", &chirp.UserID, &chirp.Content, &chirp.Location, id)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+        log.Fatalf("Error while checking the affected rows. %v", err)
+	}
+	fmt.Printf("Total rows/record affected %v", rowsAffected)
+
+	return rowsAffected
+}

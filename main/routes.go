@@ -19,7 +19,7 @@ func routes(repo *handlers.Repository) http.Handler {
 	router.HandleFunc("/chirps", repo.GetAllChirpsHandler).Methods("GET")
 	router.HandleFunc("/chirps/{id}", repo.GetChirpByIDHandler).Methods("GET")
 	router.HandleFunc("/chirps", repo.CreateNewChirpHandler).Methods("POST")
-
+	router.HandleFunc("/chirps/{id}", repo.UpdateChirpHandler).Methods("PUT")
 
 
 	return router

@@ -13,9 +13,9 @@ type Repository struct {
 
 // creates a new repository
 // the Repository type is populated with all of the info received as parameters and it handed back as a pointer to Repository
-func NewRepo(dbmod models.DBModel) *Repository {
+func NewRepo(dbm models.DBModel) *Repository {
 	return &Repository{
-		dbmodel: dbmod,
+		dbmodel: dbm,
 	}
 }
 
