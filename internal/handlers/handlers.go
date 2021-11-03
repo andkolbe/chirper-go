@@ -58,3 +58,18 @@ func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 		StringMap: stringMap,
 	})
 }
+
+// Show One Chirp Page
+func (repo *Repository) ShowOneChirp(w http.ResponseWriter, r *http.Request) {
+	render.Template(w, "show_chirp.page.html", &models.TemplateData{})
+}
+
+// New Chirp Page
+func (repo *Repository) NewChirp(w http.ResponseWriter, r *http.Request) {
+	render.Template(w, "new_chirp.page.html", &models.TemplateData{})
+}
+
+// Edit Chirp Page
+func (repo *Repository) EditChirp(w http.ResponseWriter, r *http.Request) {
+	render.Template(w, "edit_chirp.page.html", &models.TemplateData{})
+}

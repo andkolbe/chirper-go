@@ -24,12 +24,19 @@ func routes() http.Handler {
 	u.HandleFunc("/{id}", handlers.Repo.UpdateUserHandler).Methods("PUT")
 	u.HandleFunc("/{id}", handlers.Repo.DeleteUserHandler).Methods("DELETE")
 
+	ac := router.PathPrefix("/api/chirps").Subrouter()
+	ac.HandleFunc("/", handlers.Repo.GetAllChirpsHandler).Methods("GET")
+	ac.HandleFunc("/{id}", handlers.Repo.GetChirpByIDHandler).Methods("GET")
+	ac.HandleFunc("/", handlers.Repo.CreateNewChirpHandler).Methods("POST")
+	ac.HandleFunc("/{id}", handlers.Repo.UpdateChirpHandler).Methods("PUT")
+	ac.HandleFunc("/{id}", handlers.Repo.DeleteChirpHandler).Methods("DELETE")
+
 	c := router.PathPrefix("/chirps").Subrouter()
-	c.HandleFunc("/", handlers.Repo.GetAllChirpsHandler).Methods("GET")
-	c.HandleFunc("/{id}", handlers.Repo.GetChirpByIDHandler).Methods("GET")
-	c.HandleFunc("/", handlers.Repo.CreateNewChirpHandler).Methods("POST")
-	c.HandleFunc("/{id}", handlers.Repo.UpdateChirpHandler).Methods("PUT")
-	c.HandleFunc("/{id}", handlers.Repo.DeleteChirpHandler).Methods("DELETE")
+	c.HandleFunc("/new", handlers.Repo.NewChirp).Methods("GET")
+	c.HandleFunc("/edit", handlers.Repo.EditChirp).Methods("GET")
+	c.HandleFunc("/show", handlers.Repo.ShowOneChirp).Methods("GET")
+
+
 
 	router.HandleFunc("/login", handlers.Repo.Login).Methods("POST")
 
