@@ -1,7 +1,14 @@
 {{template "base" .}}
 
 {{define "content"}}
-    <body>
-        <h1>This is the new chirp page</h1>
-    </body>
+    <form class="form-group border p-4 shadow bg-white">
+        <label  class="font-weight-bold">Userid</label>
+        <input id="" type="text" class="form-control bg-secondary" />
+        <label  class="mt-4 font-weight-bold">Content</label>
+        <textarea  rows={6} id="message" class="form-control my-1 bg-secondary" ></textarea>
+        <label  class="font-weight-bold">Location</label>
+        <input  id="" type="text" class="form-control bg-secondary" />
+        <button type="submit" class="btn btn-success mt-4 font-weight-bold">Submit</button>
+    </form>
 {{end}}
+        

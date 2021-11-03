@@ -33,9 +33,16 @@
         </div>
       </nav>
 
-    {{block "content" .}}
 
-    {{end}}
+      <main class="container">
+        <section class="row justify-content-center mt-5">
+            <div class="col-md-6">
+              {{block "content" .}}
+
+              {{end}}
+            </div>
+        </section>
+      </main>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"

@@ -14,8 +14,8 @@ func routes() http.Handler {
 	router.Use(NoSurf)
 	router.Use(SessionLoad)
 
-	router.HandleFunc("/", handlers.Repo.Home).Methods("GET")
-	router.HandleFunc("/about", handlers.Repo.About).Methods("GET")
+	router.HandleFunc("/", handlers.Repo.HomePage).Methods("GET")
+	router.HandleFunc("/about", handlers.Repo.AboutPage).Methods("GET")
 
 	u := router.PathPrefix("/users").Subrouter()
 	u.HandleFunc("/", handlers.Repo.GetAllUsersHandler).Methods("GET")
@@ -32,9 +32,9 @@ func routes() http.Handler {
 	ac.HandleFunc("/{id}", handlers.Repo.DeleteChirpHandler).Methods("DELETE")
 
 	c := router.PathPrefix("/chirps").Subrouter()
-	c.HandleFunc("/new", handlers.Repo.NewChirp).Methods("GET")
-	c.HandleFunc("/edit", handlers.Repo.EditChirp).Methods("GET")
-	c.HandleFunc("/show", handlers.Repo.ShowOneChirp).Methods("GET")
+	c.HandleFunc("/new", handlers.Repo.NewChirpPage).Methods("GET")
+	c.HandleFunc("/edit", handlers.Repo.EditChirpPage).Methods("GET")
+	c.HandleFunc("/show", handlers.Repo.ShowOneChirpPage).Methods("GET")
 
 
 

@@ -81,8 +81,6 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 		// extract the page name (last element) out of the filepath 
 		name := filepath.Base(page)
 
-		fmt.Println("Page is currently", page)
-
 		// create templates based on the page name, add in any outside functions we've created, and parse the page
 		t, err := template.New(name).Funcs(functions).ParseFiles(page)
 		if err != nil {

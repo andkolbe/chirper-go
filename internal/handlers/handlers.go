@@ -43,12 +43,12 @@ type response struct {
 }
 
 // Home Page
-func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
+func (repo *Repository) HomePage(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, "home.page.html", &models.TemplateData{})
 }
 
 // About Page
-func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
+func (repo *Repository) AboutPage(w http.ResponseWriter, r *http.Request) {
 	// perform some logic
 	stringMap := map[string]string{}
 	stringMap["test"] = "Hello, again"
@@ -60,16 +60,16 @@ func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 }
 
 // Show One Chirp Page
-func (repo *Repository) ShowOneChirp(w http.ResponseWriter, r *http.Request) {
+func (repo *Repository) ShowOneChirpPage(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, "show_chirp.page.html", &models.TemplateData{})
 }
 
 // New Chirp Page
-func (repo *Repository) NewChirp(w http.ResponseWriter, r *http.Request) {
+func (repo *Repository) NewChirpPage(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, "new_chirp.page.html", &models.TemplateData{})
 }
 
 // Edit Chirp Page
-func (repo *Repository) EditChirp(w http.ResponseWriter, r *http.Request) {
+func (repo *Repository) EditChirpPage(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, "edit_chirp.page.html", &models.TemplateData{})
 }
