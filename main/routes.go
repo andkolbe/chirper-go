@@ -10,6 +10,9 @@ import (
 func routes(repo *handlers.Repository) http.Handler {
 	router := mux.NewRouter()
 
+	router.HandleFunc("/", repo.Home).Methods("GET")
+	router.HandleFunc("/about", repo.About).Methods("GET")
+
 	u := router.PathPrefix("/users").Subrouter()
 	u.HandleFunc("/", repo.GetAllUsersHandler).Methods("GET")
 	u.HandleFunc("/{id}", repo.GetUserByIDHandler).Methods("GET")

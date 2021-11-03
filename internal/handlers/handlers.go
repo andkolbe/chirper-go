@@ -1,6 +1,12 @@
 package handlers
 
-import "github.com/andkolbe/chirper-go/internal/models"
+import (
+	"fmt"
+	"net/http"
+	"text/template"
+
+	"github.com/andkolbe/chirper-go/internal/models"
+)
 
 // A handler responds to an HTTP request
 // It is responsible for writing response headers and bodies
@@ -23,4 +29,22 @@ func NewRepo(dbm models.DBModel) *Repository {
 type response struct {
     ID      int64  `json:"id,omitempty"`
     Message string `json:"message,omitempty"`
+}
+
+func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
+	renderTemplate(w, "home.page.html")
+}
+
+func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
+	renderTemplate(w, "about.page.html")
+}
+
+func renderTemplate(w http.ResponseWriter, tmpl string) {
+	// first step. Parse the template
+	parsedTemplate, _ := template.ParseFiles("./templates/" + tmpl)
+	err := parsedTemplate.Execute(w, nil)
+	if err != nil {
+		fmt.Println("error parsing template", err)
+		return 
+	}
 }
