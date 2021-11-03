@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/andkolbe/chirper-go/internal/config"
 	"github.com/andkolbe/chirper-go/internal/models"
 	"github.com/andkolbe/chirper-go/internal/render"
 )
@@ -14,14 +15,25 @@ import (
 // models.UserModel is a dependency of the Repository struct
 type Repository struct {
 	dbmodel models.DBModel
+	App *config.AppConfig
 }
+
+// the repository used by the handlers
+// pass by reference to Repository, since all references are pointing to the same place (the address in memory where the repo lives), Repo is never out of sync
+var Repo *Repository
 
 // creates a new repository
 // the Repository type is populated with all of the info received as parameters and it handed back as a pointer to Repository
-func NewRepo(dbm models.DBModel) *Repository {
+func NewRepo(dbm models.DBModel, a *config.AppConfig) *Repository {
 	return &Repository{
 		dbmodel: dbm,
+		App: a,
 	}
+}
+
+// sets the repository for the handlers
+func NewHandlers(r *Repository) {
+	Repo = r
 }
 
 // response format

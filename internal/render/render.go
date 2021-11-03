@@ -7,25 +7,38 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+
+	"github.com/andkolbe/chirper-go/internal/config"
 )
 
 // FuncMap is a map of functions that can be used in a template
 // we can add functionality to Golang templates that aren't built into the language
 var functions = template.FuncMap{}
 
+var app *config.AppConfig
+
+// sets the config for the render package
+func NewTemplates(a *config.AppConfig) {
+	app = a
+}
+
 // renders templates using html/templates
 func Template(w http.ResponseWriter, tmpl string) {
+	var templateCache map[string]*template.Template
 
-	templateCache, err := CreateTemplateCache()
-	if err != nil {
-		log.Fatal(err)
+	// if we are using the cache, use it, otherwise rebuild it
+	if app.UseCache {
+		// get the template cache (that is initialized in main.go) from the app config
+		templateCache = app.TemplateCache
+	} else {
+		templateCache, _ = CreateTemplateCache()
 	}
 
 	// pull the template out of the cache
 	t, ok := templateCache[tmpl]
 	// if the template doesn't exist in the cache
 	if !ok {
-		log.Fatal(err)
+		log.Fatal("could not get template from template cache")
 	}
 
 	// holds bytes. Put the parsed template from memory into bytes
@@ -36,7 +49,7 @@ func Template(w http.ResponseWriter, tmpl string) {
 	_ = t.Execute(buf, nil)
 
 	// write the buf to the response writer
-	_, err = buf.WriteTo(w)
+	_, err := buf.WriteTo(w)
 	if err != nil {
 		fmt.Println("error writing template to browser", err)
 	}
