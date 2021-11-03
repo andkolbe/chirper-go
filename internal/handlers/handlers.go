@@ -42,10 +42,12 @@ type response struct {
 	Message string `json:"message,omitempty"`
 }
 
+// Home Page
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, "home.page.html", &models.TemplateData{})
 }
 
+// About Page
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 	// perform some logic
 	stringMap := map[string]string{}

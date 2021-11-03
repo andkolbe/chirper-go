@@ -33,5 +33,9 @@ func routes() http.Handler {
 
 	router.HandleFunc("/login", handlers.Repo.Login).Methods("POST")
 
+	// create a file server - a place to get static files from
+	fileServer := http.FileServer(http.Dir("./static/"))
+	router.Handle("/static/*", http.StripPrefix("/static", fileServer))
+
 	return router
 }
