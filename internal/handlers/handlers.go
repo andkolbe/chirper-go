@@ -15,7 +15,7 @@ import (
 // models.UserModel is a dependency of the Repository struct
 type Repository struct {
 	dbmodel models.DBModel
-	App *config.AppConfig
+	App     *config.AppConfig
 }
 
 // the repository used by the handlers
@@ -27,7 +27,7 @@ var Repo *Repository
 func NewRepo(dbm models.DBModel, a *config.AppConfig) *Repository {
 	return &Repository{
 		dbmodel: dbm,
-		App: a,
+		App:     a,
 	}
 }
 
@@ -38,14 +38,21 @@ func NewHandlers(r *Repository) {
 
 // response format
 type response struct {
-    ID      int64  `json:"id,omitempty"`
-    Message string `json:"message,omitempty"`
+	ID      int64  `json:"id,omitempty"`
+	Message string `json:"message,omitempty"`
 }
 
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, "home.page.html")
+	render.Template(w, "home.page.html", &models.TemplateData{})
 }
 
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, "about.page.html")
+	// perform some logic
+	stringMap := map[string]string{}
+	stringMap["test"] = "Hello, again"
+
+	// send data to the template
+	render.Template(w, "about.page.html", &models.TemplateData{
+		StringMap: stringMap,
+	})
 }

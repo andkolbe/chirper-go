@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/andkolbe/chirper-go/internal/config"
+	"github.com/andkolbe/chirper-go/internal/models"
 )
 
 // FuncMap is a map of functions that can be used in a template
@@ -23,7 +24,7 @@ func NewTemplates(a *config.AppConfig) {
 }
 
 // renders templates using html/templates
-func Template(w http.ResponseWriter, tmpl string) {
+func Template(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
 	var templateCache map[string]*template.Template
 
 	// if we are using the cache, use it, otherwise rebuild it
@@ -45,8 +46,8 @@ func Template(w http.ResponseWriter, tmpl string) {
 	// write to the buffer instead of straight to the response writer so we can check for an error, and determine where it came from more easily
 	buf := new(bytes.Buffer)
 
-	// take the template, execute it, don't pass it any data, and store the value in the buf variable
-	_ = t.Execute(buf, nil)
+	// take the template, execute it, pass it data, and store the value in the buf variable
+	_ = t.Execute(buf, td)
 
 	// write the buf to the response writer
 	_, err := buf.WriteTo(w)
