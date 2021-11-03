@@ -1,8 +1,10 @@
 package render
 
 import (
+	"bytes"
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"path/filepath"
 )
@@ -14,29 +16,43 @@ var functions = template.FuncMap{}
 // renders templates using html/templates
 func Template(w http.ResponseWriter, tmpl string) {
 
-	_, err := TemplateTest(w)
+	templateCache, err := CreateTemplateCache()
 	if err != nil {
-		fmt.Println("Error getting template cache:", err)
+		log.Fatal(err)
 	}
 
-	// Parse the template that is passed in, execute it, add the given data (if any), and add it to the response
-	parsedTemplate, _ := template.ParseFiles("./templates/" + tmpl)
-	err = parsedTemplate.Execute(w, nil)
-	if err != nil {
-		fmt.Println("error parsing template", err)
-		return
+	// pull the template out of the cache
+	t, ok := templateCache[tmpl]
+	// if the template doesn't exist in the cache
+	if !ok {
+		log.Fatal(err)
 	}
+
+	// holds bytes. Put the parsed template from memory into bytes
+	// write to the buffer instead of straight to the response writer so we can check for an error, and determine where it came from more easily
+	buf := new(bytes.Buffer)
+
+	// take the template, execute it, don't pass it any data, and store the value in the buf variable
+	_ = t.Execute(buf, nil)
+
+	// write the buf to the response writer
+	_, err = buf.WriteTo(w)
+	if err != nil {
+		fmt.Println("error writing template to browser", err)
+	}
+
 }
 
-func TemplateTest(w http.ResponseWriter) (map[string]*template.Template, error) {
+// creates a template cache as a map
+func CreateTemplateCache() (map[string]*template.Template, error) {
 	// create a map to store templates for quick lookups
 	// key: name of the template, value: the template itself 
-	myCache := map[string]*template.Template{}
+	templateCache := map[string]*template.Template{}
 
 	// store the filepath of every template that ends in .page.html in a variable
 	pages, err := filepath.Glob("./templates/*.page.html")
 	if err != nil {
-		return myCache, err
+		return templateCache, err
 	}
 
 	// range through all of the pages and create a template out of each one
@@ -49,13 +65,13 @@ func TemplateTest(w http.ResponseWriter) (map[string]*template.Template, error) 
 		// create templates based on the page name, add in any outside functions we've created, and parse the page
 		t, err := template.New(name).Funcs(functions).ParseFiles(page)
 		if err != nil {
-			return myCache, err
+			return templateCache, err
 		}
 
 		// determine if there are any layouts in our app that match with the template we just created
 		matches, err := filepath.Glob("./templates/*.layout.html")
 		if err != nil {
-			return myCache, err
+			return templateCache, err
 		}
 
 		// if there is a match, then the length of matches will be greater than zero
@@ -63,13 +79,13 @@ func TemplateTest(w http.ResponseWriter) (map[string]*template.Template, error) 
 			// go to the template and parse the layout
 			t, err = t.ParseGlob("./templates/*.layout.html")
 			if err != nil {
-				return myCache, err
+				return templateCache, err
 			}
 		}
 
 		// take the template and add it to the cache
-		myCache[name] = t
+		templateCache[name] = t
 	}
 
-	return myCache, nil
+	return templateCache, nil
 }
