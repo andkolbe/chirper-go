@@ -23,6 +23,11 @@ func NewTemplates(a *config.AppConfig) {
 	app = a
 }
 
+// adds data that is available to every page in the app without having to manually add it in to every page ourselves
+func addDefaultData(td *models.TemplateData) *models.TemplateData {
+	return td
+}
+
 // renders templates using html/templates
 func Template(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
 	var templateCache map[string]*template.Template
@@ -45,6 +50,8 @@ func Template(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
 	// holds bytes. Put the parsed template from memory into bytes
 	// write to the buffer instead of straight to the response writer so we can check for an error, and determine where it came from more easily
 	buf := new(bytes.Buffer)
+
+	td = addDefaultData(td)
 
 	// take the template, execute it, pass it data, and store the value in the buf variable
 	_ = t.Execute(buf, td)
