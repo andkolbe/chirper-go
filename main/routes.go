@@ -13,7 +13,7 @@ func routes(repo *handlers.Repository) http.Handler {
 	u := router.PathPrefix("/users").Subrouter()
 	u.HandleFunc("/", repo.GetAllUsersHandler).Methods("GET")
 	u.HandleFunc("/{id}", repo.GetUserByIDHandler).Methods("GET")
-	u.HandleFunc("/", repo.CreateNewUserHandler).Methods("POST")
+	u.HandleFunc("/", repo.RegisterNewUserHandler).Methods("POST")
 	u.HandleFunc("/{id}", repo.UpdateUserHandler).Methods("PUT")
 	u.HandleFunc("/{id}", repo.DeleteUserHandler).Methods("DELETE")
 
@@ -23,6 +23,8 @@ func routes(repo *handlers.Repository) http.Handler {
 	c.HandleFunc("/", repo.CreateNewChirpHandler).Methods("POST")
 	c.HandleFunc("/{id}", repo.UpdateChirpHandler).Methods("PUT")
 	c.HandleFunc("/{id}", repo.DeleteChirpHandler).Methods("DELETE")
+
+	router.HandleFunc("/login", repo.Login).Methods("POST")
 
 	return router
 }

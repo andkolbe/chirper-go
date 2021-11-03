@@ -88,7 +88,7 @@ func (m DBModel) GetUserByID(id string) (User, error) {
 }
 
 // POST
-func (m DBModel) CreateNewUser(user User) int64 {
+func (m DBModel) RegisterNewUser(user User) int64 {
 
 	// CreateHash returns a Argon2id hash of a plain-text password using the provided algorithm parameters
 	hash, err := argon2id.CreateHash(user.Password, argon2id.DefaultParams)
@@ -132,7 +132,7 @@ func (m DBModel) UpdateUser(user User, id string) int64 {
 }
 
 // DELETE
-func (m DBModel) DeleteUser(id string) int64{
+func (m DBModel) DeleteUser(id string) int64 {
 	res, err := m.DB.Exec("DELETE FROM users WHERE id = ?", id)
 	if err != nil {
 		log.Fatal(err)
@@ -145,4 +145,26 @@ func (m DBModel) DeleteUser(id string) int64{
     fmt.Printf("Total rows/record affected %v", rowsAffected)
 
     return rowsAffected
+}
+
+// Authenticate User
+func (m DBModel) AuthenticateUser(email, password string) int {
+	var id int 
+	var hashedPassword string 
+
+	row := m.DB.QueryRow("SELECT id, password FROM users WHERE email = ?", email)
+	err := row.Scan(&id, &hashedPassword)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	match, err := argon2id.ComparePasswordAndHash(password, hashedPassword)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if !match {
+		log.Panicln("incorrect password")
+	} 
+
+	return id
 }

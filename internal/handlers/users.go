@@ -31,7 +31,7 @@ func (repo *Repository) GetAllUsersHandler(w http.ResponseWriter, r *http.Reques
 
 // GET /users/{id}
 func (repo *Repository) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
-	// read and store any variable specified on the route on the request
+	// read and store any variable specified on the route attached to the request
 	vars := mux.Vars(r)
 	// pull the id value out of the Vars map
 	id := vars["id"]
@@ -52,13 +52,13 @@ func (repo *Repository) GetUserByIDHandler(w http.ResponseWriter, r *http.Reques
 }
 
 // POST /users
-func (repo *Repository) CreateNewUserHandler(w http.ResponseWriter, r *http.Request) {
+func (repo *Repository) RegisterNewUserHandler(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	// take the data from the request body and convert it into the models.User instance variable 
 	// the http.Request body is an io.Reader
 	json.NewDecoder(r.Body).Decode(&user)
 
-	insertID := repo.dbmodel.CreateNewUser(user)
+	insertID := repo.dbmodel.RegisterNewUser(user)
 
 	res := response {
 		ID: insertID,
@@ -114,6 +114,21 @@ func (repo *Repository) DeleteUserHandler(w http.ResponseWriter, r *http.Request
         Message: msg,
     }
 
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(res)
+}
+
+// Login
+func (repo *Repository) Login(w http.ResponseWriter, r *http.Request) {
+	var user models.User
+	json.NewDecoder(r.Body).Decode(&user)
+
+	id := repo.dbmodel.AuthenticateUser(user.Email, user.Password)
+
+	res := response {
+		ID: int64(id),
+		Message: "Logged in successfully!",
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(res)
 }
