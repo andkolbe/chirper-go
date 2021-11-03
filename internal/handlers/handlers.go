@@ -1,11 +1,10 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
-	"text/template"
 
 	"github.com/andkolbe/chirper-go/internal/models"
+	"github.com/andkolbe/chirper-go/internal/render"
 )
 
 // A handler responds to an HTTP request
@@ -32,19 +31,9 @@ type response struct {
 }
 
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "home.page.html")
+	render.Template(w, "home.page.html")
 }
 
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "about.page.html")
-}
-
-func renderTemplate(w http.ResponseWriter, tmpl string) {
-	// first step. Parse the template
-	parsedTemplate, _ := template.ParseFiles("./templates/" + tmpl)
-	err := parsedTemplate.Execute(w, nil)
-	if err != nil {
-		fmt.Println("error parsing template", err)
-		return 
-	}
+	render.Template(w, "about.page.html")
 }
