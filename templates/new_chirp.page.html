@@ -1,14 +1,19 @@
 {{template "base" .}}
 
 {{define "content"}}
-    <form class="form-group border p-4 shadow bg-white">
-        <label  class="font-weight-bold">Userid</label>
-        <input id="" type="text" class="form-control bg-secondary" />
-        <label  class="mt-4 font-weight-bold">Content</label>
-        <textarea  rows={6} id="message" class="form-control my-1 bg-secondary" ></textarea>
-        <label  class="font-weight-bold">Location</label>
-        <input  id="" type="text" class="form-control bg-secondary" />
-        <button type="submit" class="btn btn-success mt-4 font-weight-bold">Submit</button>
+    <form class="form-group border p-4 shadow bg-white" action="" method="POST">
+        <h2>New Chirp</h2>
+
+        <label class="font-weight-bold" for="userid">Userid</label>
+        <input class="form-control bg-secondary" id="userid" name="userid" type="text" />
+
+        <label class="mt-4 font-weight-bold" for="content">Content</label>
+        <textarea class="form-control my-1 bg-secondary" id="content" name="content" rows={6} type="text"></textarea>
+        
+        <label class="mt-4 font-weight-bold" for="location" >Location</label>
+        <input class="form-control bg-secondary" id="location" name="location" type="text" />
+
+        <button class="btn btn-success mt-4 font-weight-bold" type="submit">Submit</button>
     </form>
 {{end}}
         
