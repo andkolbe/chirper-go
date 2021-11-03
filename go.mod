@@ -15,4 +15,7 @@ require (
 	golang.org/x/sys v0.0.0-20191026070338-33540a1f6037 // indirect
 )
 
-require github.com/justinas/nosurf v1.1.1 // indirect
+require (
+	github.com/alexedwards/scs/v2 v2.4.0 // indirect
+	github.com/justinas/nosurf v1.1.1 // indirect
+)

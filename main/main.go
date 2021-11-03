@@ -4,7 +4,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
+	"github.com/alexedwards/scs/v2"
 	"github.com/andkolbe/chirper-go/internal/config"
 	"github.com/andkolbe/chirper-go/internal/driver"
 	"github.com/andkolbe/chirper-go/internal/env"
@@ -12,6 +14,11 @@ import (
 	"github.com/andkolbe/chirper-go/internal/models"
 	"github.com/andkolbe/chirper-go/internal/render"
 )
+
+// create an instance of the AppConfig that different parts of the app can use
+var app config.AppConfig
+
+var session *scs.SessionManager
 
 func main() {
 	env.LoadEnv()
@@ -21,8 +28,18 @@ func main() {
 		log.Fatal("env variables are not set")
 	}
 
-	// create an instance of the AppConfig that different parts of the app can use
-	var app config.AppConfig
+	// change this to true when in production
+	app.InProduction = false
+
+	// initialize session
+	session = scs.New()
+	session.Lifetime = 24 * time.Hour
+	session.Cookie.Persist = true // persist the session even if the browser window is closed
+	session.Cookie.SameSite = http.SameSiteLaxMode
+	session.Cookie.Secure = app.InProduction // use https
+
+	// make our scs.SessionManager instance variable available in the AppConfig so it can be used anywhere else in the application
+	app.Session = session
 
 	// initialize the template cache when the application starts
 	templateCache, err := render.CreateTemplateCache()

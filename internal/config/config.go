@@ -1,6 +1,10 @@
 package config
 
-import "html/template"
+import (
+	"html/template"
+
+	"github.com/alexedwards/scs/v2"
+)
 
 // exports to all parts of our application, but doesn't import anything from anywhere else
 // only uses packages already built into our standard library
@@ -8,6 +12,8 @@ import "html/template"
 type AppConfig struct {
 	UseCache      bool
 	TemplateCache map[string]*template.Template
+	InProduction  bool
+	Session       *scs.SessionManager
 }
 
 // The config is just a way to share information among the parts of our application that are going to need it. For example, certain parts of the application

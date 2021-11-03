@@ -10,7 +10,9 @@ import (
 func routes() http.Handler {
 	router := mux.NewRouter()
 
+	// middleware
 	router.Use(NoSurf)
+	router.Use(SessionLoad)
 
 	router.HandleFunc("/", handlers.Repo.Home).Methods("GET")
 	router.HandleFunc("/about", handlers.Repo.About).Methods("GET")
