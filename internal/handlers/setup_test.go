@@ -17,7 +17,6 @@ import (
 	"github.com/andkolbe/chirper-go/internal/render"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-	"github.com/justinas/nosurf"
 )
 
 // we have to import everything our handlers need to work to be able to test them
@@ -71,7 +70,6 @@ func getRoutes() http.Handler {
 
 	router := mux.NewRouter()
 
-	router.Use(NoSurf)
 	router.Use(SessionLoad)
 
 	router.HandleFunc("/", Repo.HomePage).Methods("GET")
@@ -105,19 +103,6 @@ func getRoutes() http.Handler {
 	router.Handle("/static/*", http.StripPrefix("/static", fileServer))
 
 	return router
-}
-
-func NoSurf(next http.Handler) http.Handler {
-	csrfHandler := nosurf.New(next)
-
-	csrfHandler.SetBaseCookie(http.Cookie{
-		HttpOnly: true,
-		Path: "/", 
-		Secure: app.InProduction,
-		SameSite: http.SameSiteLaxMode,
-	})
-
-	return csrfHandler
 }
 
 func SessionLoad(next http.Handler) http.Handler {

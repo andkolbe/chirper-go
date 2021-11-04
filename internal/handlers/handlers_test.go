@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 )
 
@@ -27,6 +28,11 @@ var theTests = []struct {
 	{"new chirp page", "/chirps/new", "GET", []postData{}, http.StatusOK},
 	{"edit chirp page", "/chirps/edit", "GET", []postData{}, http.StatusOK},
 	{"show chirp page", "/chirps/show", "GET", []postData{}, http.StatusOK},
+	{"post new chirp", "/chirps/new", "POST", []postData{
+		{key: "userid", value: "1"},
+		{key: "content", value: "Hello World"},
+		{key: "location", value: "Birmingham"},
+	}, http.StatusOK},
 }
 
 func TestHandlers(t *testing.T) {
@@ -37,20 +43,36 @@ func TestHandlers(t *testing.T) {
 	// close the testServer when this function is done running
 	defer testServer.Close()
 
-	for _, e := range theTests {
-		if e.method == "GET" {
+	for _, test := range theTests {
+		if test.method == "GET" {
 			// make a request as though we were a client
-			response, err := testServer.Client().Get(testServer.URL + e.url)
+			response, err := testServer.Client().Get(testServer.URL + test.url)
 			if err != nil {
 				t.Log(err)
 				t.Fatal(err)
 			}
 
-			if response.StatusCode != e.expectedStatusCode {
-				t.Errorf("for %s, expected %d, but got %d", e.name, e.expectedStatusCode, response.StatusCode)
+			if response.StatusCode != test.expectedStatusCode {
+				t.Errorf("for %s, expected %d, but got %d", test.name, test.expectedStatusCode, response.StatusCode)
 			}
-		} else {
+		} else { // POST
+			// construct a variable that is in the format that the test server expects to receive
+			// url.Values is a built in type, part of the standard library, that holds information as a POST request
+			values := url.Values{}
+			// populate values with our entries
+			for _, param := range test.params {
+				values.Add(param.key, param.value)
+			}
+			// call the testServer again but with a post form
+			response, err := testServer.Client().PostForm(testServer.URL + test.url, values)
+			if err != nil {
+				t.Log(err)
+				t.Fatal(err)
+			}
 
+			if response.StatusCode != test.expectedStatusCode {
+				t.Errorf("for %s, expected %d, but got %d", test.name, test.expectedStatusCode, response.StatusCode)
+			}
 		}
 	}
 }
