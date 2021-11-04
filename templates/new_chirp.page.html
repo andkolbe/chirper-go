@@ -1,7 +1,9 @@
 {{template "base" .}}
 
 {{define "content"}}
-    <form class="form-group border p-4 shadow bg-white" action="" method="POST">
+    <form class="form-group border p-4 shadow bg-white" action="/chirps/new" method="POST">
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+        
         <h2>New Chirp</h2>
 
         <label class="font-weight-bold" for="userid">Userid</label>

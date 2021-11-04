@@ -33,6 +33,7 @@ func routes() http.Handler {
 
 	c := router.PathPrefix("/chirps").Subrouter()
 	c.HandleFunc("/new", handlers.Repo.NewChirpPage).Methods("GET")
+	c.HandleFunc("/new", handlers.Repo.CreateNewChirpHandler).Methods("POST")
 	c.HandleFunc("/edit", handlers.Repo.EditChirpPage).Methods("GET")
 	c.HandleFunc("/show", handlers.Repo.ShowOneChirpPage).Methods("GET")
 

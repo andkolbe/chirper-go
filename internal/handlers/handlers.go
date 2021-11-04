@@ -44,7 +44,7 @@ type response struct {
 
 // Home Page
 func (repo *Repository) HomePage(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, "home.page.html", &models.TemplateData{})
+	render.Template(w, r, "home.page.html", &models.TemplateData{})
 }
 
 // About Page
@@ -54,22 +54,22 @@ func (repo *Repository) AboutPage(w http.ResponseWriter, r *http.Request) {
 	stringMap["test"] = "Hello, again"
 
 	// send data to the template
-	render.Template(w, "about.page.html", &models.TemplateData{
+	render.Template(w, r, "about.page.html", &models.TemplateData{
 		StringMap: stringMap,
 	})
 }
 
 // Show One Chirp Page
 func (repo *Repository) ShowOneChirpPage(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, "show_chirp.page.html", &models.TemplateData{})
+	render.Template(w, r, "show_chirp.page.html", &models.TemplateData{})
 }
 
 // New Chirp Page
 func (repo *Repository) NewChirpPage(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, "new_chirp.page.html", &models.TemplateData{})
+	render.Template(w, r, "new_chirp.page.html", &models.TemplateData{})
 }
 
 // Edit Chirp Page
 func (repo *Repository) EditChirpPage(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, "edit_chirp.page.html", &models.TemplateData{})
+	render.Template(w, r, "edit_chirp.page.html", &models.TemplateData{})
 }

@@ -46,19 +46,24 @@ func (repo *Repository) GetChirpByIDHandler(w http.ResponseWriter, r *http.Reque
 
 // POST /chirps
 func (repo *Repository) CreateNewChirpHandler(w http.ResponseWriter, r *http.Request) {
-	var chirp models.Chirp
+	// var chirp models.Chirp
 	
-	json.NewDecoder(r.Body).Decode(&chirp)
+	// json.NewDecoder(r.Body).Decode(&chirp)
 
-	insertID := repo.dbmodel.CreateNewChirp(chirp)
+	// insertID := repo.dbmodel.CreateNewChirp(chirp)
 
-	res := response {
-		ID: insertID,
-		Message: "Chirp created successfully!",
-	}
+	// res := response {
+	// 	ID: insertID,
+	// 	Message: "Chirp created successfully!",
+	// }
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(res)
+	// w.Header().Set("Content-Type", "application/json")
+	// json.NewEncoder(w).Encode(res)
+
+	userid := r.Form.Get("userid")
+	content := r.Form.Get("content")
+	location := r.Form.Get("location")
+	w.Write([]byte(fmt.Sprintln(userid, content, location)))
 }
 
 // PUT /chirps/{id}

@@ -10,6 +10,7 @@ import (
 
 	"github.com/andkolbe/chirper-go/internal/config"
 	"github.com/andkolbe/chirper-go/internal/models"
+	"github.com/justinas/nosurf"
 )
 
 // FuncMap is a map of functions that can be used in a template
@@ -24,16 +25,19 @@ func NewTemplates(a *config.AppConfig) {
 }
 
 // adds data that is available to every page in the app without having to manually add it in to every page ourselves
-func addDefaultData(td *models.TemplateData) *models.TemplateData {
+func addDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
+	// we want every page to have a CSRF token attached to it
+	td.CSRFToken = nosurf.Token(r)
 	return td
 }
 
 // renders templates using html/templates
-func Template(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
+func Template(w http.ResponseWriter, r *http.Request, tmpl string, td *models.TemplateData) {
 	var templateCache map[string]*template.Template
 
-	// if we are using the cache, use it, otherwise rebuild it
-	if app.UseCache {
+	// if we are in production, use the template cache 
+	// Otherwise, in development, rebuild it on every request so we don't have to restart the server for every change
+	if app.InProduction {
 		// get the template cache (that is initialized in main.go) from the app config
 		templateCache = app.TemplateCache
 	} else {
@@ -51,7 +55,7 @@ func Template(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
 	// write to the buffer instead of straight to the response writer so we can check for an error, and determine where it came from more easily
 	buf := new(bytes.Buffer)
 
-	td = addDefaultData(td)
+	td = addDefaultData(td, r)
 
 	// take the template, execute it, pass it data, and store the value in the buf variable
 	_ = t.Execute(buf, td)

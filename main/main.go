@@ -49,9 +49,6 @@ func main() {
 	// store the template cache in an instance of the AppConfig
 	app.TemplateCache = templateCache
 
-	// lets us change the templates in development without having to restart the server every time
-	app.UseCache = false
-
 	// gives our render package access to everything inside of AppConfig  (it needs the template cache we initialized here)
 	render.NewTemplates(&app)
 
