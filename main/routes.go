@@ -3,11 +3,12 @@ package main
 import (
 	"net/http"
 
+	"github.com/andkolbe/chirper-go/internal/config"
 	"github.com/andkolbe/chirper-go/internal/handlers"
 	"github.com/gorilla/mux"
 )
 
-func routes() http.Handler {
+func routes(app *config.AppConfig) http.Handler {
 	router := mux.NewRouter()
 
 	// middleware

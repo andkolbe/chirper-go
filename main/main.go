@@ -22,6 +22,22 @@ var app config.AppConfig
 var session *scs.SessionManager
 
 func main() {
+	PORT, err := run()
+	if err != nil {
+		log.Fatal(err)
+	} 
+
+	srv := &http.Server {
+		Addr: "127.0.0.1:"+PORT,
+		Handler: routes(&app),
+	}
+
+	err = srv.ListenAndServe()
+	log.Fatal(err)
+}
+
+func run() (string, error) {
+
 	env.LoadEnv()
 	PORT := os.Getenv("PORT")
 	URL := os.Getenv("URL")
@@ -48,7 +64,8 @@ func main() {
 	// initialize the template cache when the application starts
 	templateCache, err := render.CreateTemplateCache()
 	if err != nil {
-		log.Fatal("cannot crete template cache")
+		log.Fatal("cannot create template cache")
+		return "", err
 	}
 	// store the template cache in an instance of the AppConfig
 	app.TemplateCache = templateCache
@@ -67,7 +84,5 @@ func main() {
 	// gives our handlers package access to everything inside of AppConfig 
 	handlers.NewHandlers(repo)
 
-	mux := routes()
-
-	http.ListenAndServe("127.0.0.1:"+PORT, mux)
+	return PORT, nil
 }
