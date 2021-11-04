@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/andkolbe/chirper-go/internal/config"
+	"github.com/andkolbe/chirper-go/internal/forms"
 	"github.com/andkolbe/chirper-go/internal/models"
 	"github.com/andkolbe/chirper-go/internal/render"
 )
@@ -66,7 +67,9 @@ func (repo *Repository) ShowOneChirpPage(w http.ResponseWriter, r *http.Request)
 
 // New Chirp Page
 func (repo *Repository) NewChirpPage(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, r, "new_chirp.page.html", &models.TemplateData{})
+	render.Template(w, r, "new_chirp.page.html", &models.TemplateData{
+		Form: forms.New(nil), // include an empty form with the template
+	})
 }
 
 // Edit Chirp Page

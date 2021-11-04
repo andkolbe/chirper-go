@@ -27,13 +27,13 @@ func routes() http.Handler {
 	ac := router.PathPrefix("/api/chirps").Subrouter()
 	ac.HandleFunc("/", handlers.Repo.GetAllChirpsHandler).Methods("GET")
 	ac.HandleFunc("/{id}", handlers.Repo.GetChirpByIDHandler).Methods("GET")
-	ac.HandleFunc("/", handlers.Repo.CreateNewChirpHandler).Methods("POST")
+	ac.HandleFunc("/", handlers.Repo.PostNewChirpHandler).Methods("POST")
 	ac.HandleFunc("/{id}", handlers.Repo.UpdateChirpHandler).Methods("PUT")
 	ac.HandleFunc("/{id}", handlers.Repo.DeleteChirpHandler).Methods("DELETE")
 
 	c := router.PathPrefix("/chirps").Subrouter()
 	c.HandleFunc("/new", handlers.Repo.NewChirpPage).Methods("GET")
-	c.HandleFunc("/new", handlers.Repo.CreateNewChirpHandler).Methods("POST")
+	c.HandleFunc("/new", handlers.Repo.PostNewChirpHandler).Methods("POST")
 	c.HandleFunc("/edit", handlers.Repo.EditChirpPage).Methods("GET")
 	c.HandleFunc("/show", handlers.Repo.ShowOneChirpPage).Methods("GET")
 

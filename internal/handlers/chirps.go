@@ -45,7 +45,7 @@ func (repo *Repository) GetChirpByIDHandler(w http.ResponseWriter, r *http.Reque
 }
 
 // POST /chirps
-func (repo *Repository) CreateNewChirpHandler(w http.ResponseWriter, r *http.Request) {
+func (repo *Repository) PostNewChirpHandler(w http.ResponseWriter, r *http.Request) {
 	// var chirp models.Chirp
 	
 	// json.NewDecoder(r.Body).Decode(&chirp)

@@ -1,5 +1,7 @@
 package models
 
+import "github.com/andkolbe/chirper-go/internal/forms"
+
 // holds any type of data we send from handlers to templates
 type TemplateData struct {
 	// use maps because we will could send more than one string, int, whatever to the templates
@@ -11,4 +13,5 @@ type TemplateData struct {
 	Flash     string
 	Warning   string
 	Error     string
+	Form      *forms.Form
 }
