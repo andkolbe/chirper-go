@@ -11,8 +11,13 @@ type Form struct {
 	Errors errors
 }
 
+// returns true if there are no errors on the form
+func (f *Form) Valid() bool {
+	return len(f.Errors) == 0
+}
+
 // initializes a form struct that only contains the data that was passed in. No (potential) errors yet 
-// pass it nil because it has no data attached to it when it is initialized. Only when it is submitted does the form contain data
+// pass it nil on the handlers because it has no data attached to it when it is initialized. Only when it is submitted does the form contain data
 func New(data url.Values) *Form {
 	return &Form{
 		data,
@@ -24,6 +29,10 @@ func New(data url.Values) *Form {
 func (f *Form) Has(field string, r *http.Request) bool {
 	formField := r.Form.Get(field)
 
-	// return true if the form field isn't blank
-	return formField != ""
+	if formField == "" {
+		f.Errors.Add(field, "This field cannot be blank")
+		return false
+	}
+
+	return true
 }

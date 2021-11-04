@@ -7,7 +7,9 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/andkolbe/chirper-go/internal/forms"
 	"github.com/andkolbe/chirper-go/internal/models"
+	"github.com/andkolbe/chirper-go/internal/render"
 	"github.com/gorilla/mux"
 )
 
@@ -46,6 +48,37 @@ func (repo *Repository) GetChirpByIDHandler(w http.ResponseWriter, r *http.Reque
 
 // POST /chirps
 func (repo *Repository) PostNewChirpHandler(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		log.Println(err)
+	}
+
+	chirp := models.Chirp {
+		UserID: r.Form.Get("userid"),
+		Content: r.Form.Get("content"),
+		Location: r.Form.Get("location"),
+	}
+
+	// pass the post form data into the empty form that is initialized on the handler
+	form := forms.New(r.PostForm)
+
+	form.Has("userid", r)
+
+	if !form.Valid() {
+		// data comes from models.templatedata
+		data := make(map[string]interface{})
+		data["chirp"] = chirp 
+
+		// reload the page with the form and data passed to the form
+		render.Template(w, r, "new_chirp.page.html", &models.TemplateData{
+		Form: form, 
+		Data: data,
+		})
+		return
+	}
+
+	
+
 	// var chirp models.Chirp
 	
 	// json.NewDecoder(r.Body).Decode(&chirp)
@@ -60,10 +93,6 @@ func (repo *Repository) PostNewChirpHandler(w http.ResponseWriter, r *http.Reque
 	// w.Header().Set("Content-Type", "application/json")
 	// json.NewEncoder(w).Encode(res)
 
-	userid := r.Form.Get("userid")
-	content := r.Form.Get("content")
-	location := r.Form.Get("location")
-	w.Write([]byte(fmt.Sprintln(userid, content, location)))
 }
 
 // PUT /chirps/{id}

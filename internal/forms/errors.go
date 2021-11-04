@@ -1,5 +1,8 @@
 package forms
 
+// hold all potential form field errors in a map
+// each form field is a different key, and the potential errors are the values
+// []string because there could be more than one error on a field
 type errors map[string][]string
 
 // adds an error message for a given form field

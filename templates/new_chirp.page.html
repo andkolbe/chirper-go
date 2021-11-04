@@ -6,13 +6,16 @@
 
         <h2>New Chirp</h2>
         
-        <label class="font-weight-bold" for="userid">Userid</label>
-        <input class="form-control bg-secondary" id="userid" name="userid" type="text" required/>
+        <label class="font-weight-bold" for="userid">Userid:</label>
+        {{with .Form.Errors.Get "userid"}} 
+            <label class="text-danger">{{.}}</label>
+        {{end}}
+        <input class='form-control bg-secondary {{with .Form.Errors.Get "userid"}} is-invalid {{end}}' id="userid" name="userid" type="text" required/>
 
-        <label class="mt-4 font-weight-bold" for="content">Content</label>
+        <label class="mt-4 font-weight-bold" for="content">Content:</label>
         <textarea class="form-control my-1 bg-secondary" id="content" name="content" rows={6} type="text" required></textarea>
         
-        <label class="mt-4 font-weight-bold" for="location" >Location</label>
+        <label class="mt-4 font-weight-bold" for="location" >Location:</label>
         <input class="form-control bg-secondary" id="location" name="location" type="text" required/>
 
         <button class="btn btn-success mt-4 font-weight-bold" type="submit">Submit</button>
