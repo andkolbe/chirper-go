@@ -2,9 +2,9 @@ package render
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"path/filepath"
 
@@ -27,7 +27,7 @@ func NewTemplates(a *config.AppConfig) {
 }
 
 // adds data that is available to every page in the app without having to manually add it in to every page ourselves
-func addDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
+func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
 	// we want every page to have a CSRF token attached to it
 	td.CSRFToken = nosurf.Token(r)
 
@@ -40,7 +40,7 @@ func addDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateDa
 }
 
 // renders templates using html/templates
-func Template(w http.ResponseWriter, r *http.Request, tmpl string, td *models.TemplateData) {
+func Template(w http.ResponseWriter, r *http.Request, tmpl string, td *models.TemplateData) error {
 	var templateCache map[string]*template.Template
 
 	// if we are in production, use the template cache 
@@ -56,14 +56,14 @@ func Template(w http.ResponseWriter, r *http.Request, tmpl string, td *models.Te
 	t, ok := templateCache[tmpl]
 	// if the template doesn't exist in the cache
 	if !ok {
-		log.Fatal("could not get template from template cache")
+		return errors.New("can't get template from cache")
 	}
 
 	// holds bytes. Put the parsed template from memory into bytes
 	// write to the buffer instead of straight to the response writer so we can check for an error, and determine where it came from more easily
 	buf := new(bytes.Buffer)
 
-	td = addDefaultData(td, r)
+	td = AddDefaultData(td, r)
 
 	// take the template, execute it, pass it data, and store the value in the buf variable
 	_ = t.Execute(buf, td)
@@ -72,8 +72,10 @@ func Template(w http.ResponseWriter, r *http.Request, tmpl string, td *models.Te
 	_, err := buf.WriteTo(w)
 	if err != nil {
 		fmt.Println("error writing template to browser", err)
+		return err
 	}
 
+	return nil
 }
 
 // creates a template cache as a map
