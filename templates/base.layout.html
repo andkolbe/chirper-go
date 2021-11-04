@@ -58,6 +58,8 @@
     integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
     crossorigin="anonymous"></script>
   <script src='https://unpkg.com/notie'></script>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 
   {{block "js" .}}
@@ -66,14 +68,24 @@
 
   <script>
 
-    document.getElementById("colorButton").addEventListener("click", function() {
-      notify("Hello", "warning")
+    document.getElementById("colorButton").addEventListener("click", function () {
+      // notify("Hello", "warning")
+      notifyModal("title", "Hello", "success", "My text for the button")
     })
 
     function notify(msg, msgType) {
       notie.alert({
         type: msgType,
         text: msg,
+      })
+    }
+
+    function notifyModal(title, text, icon, confirmButtonText) {
+      Swal.fire({
+        title,
+        text, 
+        icon,
+        confirmButtonText
       })
     }
 
