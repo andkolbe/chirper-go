@@ -10,6 +10,7 @@ import (
 // only uses packages already built into our standard library
 // because it is a struct, we can put anything we need sitewide for our app, and it will be available to every package that imports this package
 type AppConfig struct {
+	UseCache bool
 	TemplateCache map[string]*template.Template
 	InProduction  bool
 	Session       *scs.SessionManager

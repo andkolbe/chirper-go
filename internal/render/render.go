@@ -19,6 +19,8 @@ var functions = template.FuncMap{}
 
 var app *config.AppConfig
 
+var pathToTemplates = "./templates"
+
 // sets the config for the render package
 func NewTemplates(a *config.AppConfig) {
 	app = a
@@ -43,7 +45,7 @@ func Template(w http.ResponseWriter, r *http.Request, tmpl string, td *models.Te
 
 	// if we are in production, use the template cache 
 	// Otherwise, in development, rebuild it on every request so we don't have to restart the server for every change
-	if app.InProduction {
+	if app.UseCache {
 		// get the template cache (that is initialized in main.go) from the app config
 		templateCache = app.TemplateCache
 	} else {
@@ -81,7 +83,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 	templateCache := map[string]*template.Template{}
 
 	// store the filepath of every template that ends in .page.html in a variable
-	pages, err := filepath.Glob("./templates/*.page.html")
+	pages, err := filepath.Glob(fmt.Sprintf("%s/*.page.html", pathToTemplates))
 	if err != nil {
 		return templateCache, err
 	}
@@ -98,7 +100,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 		}
 
 		// determine if there are any layouts in our app that match with the template we just created
-		matches, err := filepath.Glob("./templates/*.layout.html")
+		matches, err := filepath.Glob(fmt.Sprintf("%s/*.layout.html", pathToTemplates))
 		if err != nil {
 			return templateCache, err
 		}
@@ -106,7 +108,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 		// if there is a match, then the length of matches will be greater than zero
 		if len(matches) > 0 {
 			// go to the template and parse the layout
-			t, err = t.ParseGlob("./templates/*.layout.html")
+			t, err = t.ParseGlob(fmt.Sprintf("%s/*.layout.html", pathToTemplates))
 			if err != nil {
 				return templateCache, err
 			}
