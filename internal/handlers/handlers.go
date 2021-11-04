@@ -84,13 +84,21 @@ func (repo *Repository) EditChirpPage(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "edit_chirp.page.html", &models.TemplateData{})
 }
 
+// SAME LOGIC FOR PROFILE PAGE
 func (repo *Repository) ChirpSummary(w http.ResponseWriter, r *http.Request) {
 	// pull the data called "chirp" out of the session and type assert it to type models.Chirp
 	chirp, ok := repo.App.Session.Get(r.Context(), "chirp").(models.Chirp)
 	if !ok {
 		log.Println("cannot get item from session")
+		// put a error message into the session
+		repo.App.Session.Put(r.Context(), "error", "can't get chirp from session")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
+
+	// remove the chirp from the session
+	repo.App.Session.Remove(r.Context(), "chirp")
+
 	// add chirp that was pulled out of the session into the template data
 	data := make(map[string]interface{})
 	data["chirp"] = chirp

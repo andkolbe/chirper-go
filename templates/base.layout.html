@@ -89,7 +89,7 @@
         })
     })()
 
-    function notify(type, text) {
+    function notify(text, type) {
       notie.alert({
         type,
         text,
@@ -104,6 +104,19 @@
         confirmButtonText
       })
     }
+
+    // when someone comes to a page and we nned to display an error message
+    {{with .Error}}
+    notify("{{.}}", "error")
+    {{end}}
+
+    {{with .Flash}}
+    notify("{{.}}", "success")
+    {{end}}
+
+    {{with .Warning}}
+    notify("{{.}}", "warning")
+    {{end}}
 
     function Prompt() {
 

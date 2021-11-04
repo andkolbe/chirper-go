@@ -28,6 +28,12 @@ func NewTemplates(a *config.AppConfig) {
 func addDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
 	// we want every page to have a CSRF token attached to it
 	td.CSRFToken = nosurf.Token(r)
+
+	// pop the flash, warning, and/or error message out of the session if there is one
+	td.Flash = app.Session.PopString(r.Context(), "flash")
+	td.Error = app.Session.PopString(r.Context(), "error")
+	td.Warning = app.Session.PopString(r.Context(), "warning")
+
 	return td
 }
 
