@@ -53,34 +53,34 @@ func (repo *Repository) PostNewChirpHandler(w http.ResponseWriter, r *http.Reque
 		log.Println(err)
 	}
 
-	chirp := models.Chirp {
-		UserID: r.Form.Get("userid"),
-		Content: r.Form.Get("content"),
+	chirp := models.Chirp{
+		UserID:   r.Form.Get("userid"),
+		Content:  r.Form.Get("content"),
 		Location: r.Form.Get("location"),
 	}
 
 	// pass the post form data into the empty form that is initialized on the handler
 	form := forms.New(r.PostForm)
 
-	form.Has("userid", r)
+	// checks on form fields we created the forms package
+	form.Required("userid", "content", "location")
+	form.MinLength("content", 5, r)
 
 	if !form.Valid() {
 		// data comes from models.templatedata
 		data := make(map[string]interface{})
-		data["chirp"] = chirp 
+		data["chirp"] = chirp
 
 		// reload the page with the form and data passed to the form
 		render.Template(w, r, "new_chirp.page.html", &models.TemplateData{
-		Form: form, 
-		Data: data,
+			Form: form,
+			Data: data,
 		})
 		return
 	}
 
-	
-
 	// var chirp models.Chirp
-	
+
 	// json.NewDecoder(r.Body).Decode(&chirp)
 
 	// insertID := repo.dbmodel.CreateNewChirp(chirp)
@@ -100,7 +100,6 @@ func (repo *Repository) UpdateChirpHandler(w http.ResponseWriter, r *http.Reques
 	var chirp models.Chirp
 	json.NewDecoder(r.Body).Decode(&chirp)
 
-
 	vars := mux.Vars(r)
 	id := vars["id"]
 	if id == "" {
@@ -113,9 +112,9 @@ func (repo *Repository) UpdateChirpHandler(w http.ResponseWriter, r *http.Reques
 	msg := fmt.Sprintf("Chirp updated successfully. Total rows affected %v", updatedRows)
 	intID, _ := strconv.Atoi(id)
 	res := response{
-        ID:      int64(intID),
-        Message: msg,
-    }
+		ID:      int64(intID),
+		Message: msg,
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(res)
 }
@@ -135,9 +134,9 @@ func (repo *Repository) DeleteChirpHandler(w http.ResponseWriter, r *http.Reques
 	intID, _ := strconv.Atoi(id)
 
 	res := response{
-        ID:      int64(intID),
-        Message: msg,
-    }
+		ID:      int64(intID),
+		Message: msg,
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(res)

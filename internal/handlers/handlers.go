@@ -67,8 +67,14 @@ func (repo *Repository) ShowOneChirpPage(w http.ResponseWriter, r *http.Request)
 
 // New Chirp Page
 func (repo *Repository) NewChirpPage(w http.ResponseWriter, r *http.Request) {
+	// initialize an empty chirp model and pass it to the data when the page loads so we can use it later on
+	var emptyChirp models.Chirp
+	data := make(map[string]interface{})
+	data["chirp"] = emptyChirp
+
 	render.Template(w, r, "new_chirp.page.html", &models.TemplateData{
 		Form: forms.New(nil), // include an empty form with the template
+		Data: data,
 	})
 }
 

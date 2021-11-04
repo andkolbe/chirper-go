@@ -1,8 +1,10 @@
 package forms
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 // holds all of the information associated with the form both when it is initialized and after the form is submitted
@@ -25,12 +27,32 @@ func New(data url.Values) *Form {
 	}
 }
 
+// checks for required fields
+// variadic function. Can pass as many fields as you want into it
+func (f *Form) Required(fields ...string) {
+	// range through all the fields 
+	for _, field := range fields {
+		value := f.Get(field)
+		// if a field is blank, add an error to that field
+		if strings.TrimSpace(value) == "" {
+			f.Errors.Add(field, "this field cannot be blank")
+		}
+	}
+}
+
 // checks that the form field is included in the request
 func (f *Form) Has(field string, r *http.Request) bool {
 	formField := r.Form.Get(field)
 
-	if formField == "" {
-		f.Errors.Add(field, "This field cannot be blank")
+	return formField != ""
+}
+
+// checks that the form field has a min length
+func (f *Form) MinLength(field string, length int, r *http.Request) bool {
+	formField := r.Form.Get(field)
+
+	if len(formField) < length {
+		f.Errors.Add(field, fmt.Sprintf("This field must be at least %d characters long", length))
 		return false
 	}
 
