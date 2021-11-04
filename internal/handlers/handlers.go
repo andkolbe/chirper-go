@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/andkolbe/chirper-go/internal/config"
@@ -81,4 +82,21 @@ func (repo *Repository) NewChirpPage(w http.ResponseWriter, r *http.Request) {
 // Edit Chirp Page
 func (repo *Repository) EditChirpPage(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "edit_chirp.page.html", &models.TemplateData{})
+}
+
+func (repo *Repository) ChirpSummary(w http.ResponseWriter, r *http.Request) {
+	// pull the data called "chirp" out of the session and type assert it to type models.Chirp
+	chirp, ok := repo.App.Session.Get(r.Context(), "chirp").(models.Chirp)
+	if !ok {
+		log.Println("cannot get item from session")
+		return
+	}
+	// add chirp that was pulled out of the session into the template data
+	data := make(map[string]interface{})
+	data["chirp"] = chirp
+
+	// render the page with the data passed in
+	render.Template(w, r, "chirp-summary.page.html", &models.TemplateData{
+		Data: data,
+	})
 }

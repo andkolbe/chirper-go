@@ -79,6 +79,12 @@ func (repo *Repository) PostNewChirpHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	// add chirp into session
+	repo.App.Session.Put(r.Context(), "chirp", chirp)
+
+	// any time your site receives a POST request, you should direct users to another page with a HTTP redirect so they can't accidently click on the submit twice
+	http.Redirect(w, r, "/chirps/summary", http.StatusSeeOther)
+
 	// var chirp models.Chirp
 
 	// json.NewDecoder(r.Body).Decode(&chirp)

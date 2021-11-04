@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/gob"
 	"log"
 	"net/http"
 	"os"
@@ -27,6 +28,9 @@ func main() {
 	if PORT == "" || URL == "" {
 		log.Fatal("env variables are not set")
 	}
+
+	// what I am going to put in the session
+	gob.Register(models.Chirp{})
 
 	// change this to true when in production
 	app.InProduction = false

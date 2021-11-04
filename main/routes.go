@@ -37,7 +37,7 @@ func routes() http.Handler {
 	c.HandleFunc("/edit", handlers.Repo.EditChirpPage).Methods("GET")
 	c.HandleFunc("/show", handlers.Repo.ShowOneChirpPage).Methods("GET")
 
-
+	c.HandleFunc("/summary", handlers.Repo.ChirpSummary).Methods("GET")
 
 	router.HandleFunc("/login", handlers.Repo.Login).Methods("POST")
 

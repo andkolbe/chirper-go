@@ -1,0 +1,27 @@
+{{template "base" .}}
+
+{{define "content"}}
+    {{$chirp := index .Data "chirp"}}
+    <h1 class="mt-5">Chirp Summary</h1>
+
+    <hr>
+
+    <table class="table table-striped">
+        <thead></thead>
+        <tbody>
+            <tr>
+                <td>UserID:</td>
+                <td>{{$chirp.UserID}}</td>
+            </tr>
+            <tr>
+                <td>Content:</td>
+                <td>{{$chirp.Content}}</td>
+            </tr>
+            <tr>
+                <td>Location:</td>
+                <td>{{$chirp.Location}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+{{end}}
