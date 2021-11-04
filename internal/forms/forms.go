@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/asaskevich/govalidator"
 )
 
 // holds all of the information associated with the form both when it is initialized and after the form is submitted
@@ -57,4 +59,11 @@ func (f *Form) MinLength(field string, length int, r *http.Request) bool {
 	}
 
 	return true
+}
+
+// checks for valid email address
+func (f *Form) IsEmail(field string) {
+	if !govalidator.IsEmail(f.Get(field)) {
+		f.Errors.Add(field, "invalid email address")
+	}
 }
