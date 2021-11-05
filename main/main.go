@@ -93,7 +93,7 @@ func run() (string, error) {
 	handlers.NewHandlers(repo)
 
 	// gives our render package access to everything inside of AppConfig  (it needs the template cache we initialized here)
-	render.NewTemplates(&app)
+	render.NewRenderer(&app)
 
 	helpers.NewHelpers(&app)
 

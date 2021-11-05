@@ -18,6 +18,9 @@ func routes(app *config.AppConfig) http.Handler {
 	router.HandleFunc("/", handlers.Repo.HomePage).Methods("GET")
 	router.HandleFunc("/about", handlers.Repo.AboutPage).Methods("GET")
 
+	router.HandleFunc("/login", handlers.Repo.LoginPage).Methods("GET")
+	router.HandleFunc("/login", handlers.Repo.Login).Methods("POST")
+
 	u := router.PathPrefix("/users").Subrouter()
 	u.HandleFunc("/", handlers.Repo.GetAllUsersHandler).Methods("GET")
 	u.HandleFunc("/{id}", handlers.Repo.GetUserByIDHandler).Methods("GET")
@@ -40,7 +43,6 @@ func routes(app *config.AppConfig) http.Handler {
 
 	c.HandleFunc("/summary", handlers.Repo.ChirpSummary).Methods("GET")
 
-	router.HandleFunc("/login", handlers.Repo.Login).Methods("POST")
 
 	// create a file server - a place to get static files from
 	fileServer := http.FileServer(http.Dir("./static/"))

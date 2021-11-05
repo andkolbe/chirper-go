@@ -22,7 +22,7 @@ var app *config.AppConfig
 var pathToTemplates = "./templates"
 
 // sets the config for the render package
-func NewTemplates(a *config.AppConfig) {
+func NewRenderer(a *config.AppConfig) {
 	app = a
 }
 

@@ -64,7 +64,7 @@ func getRoutes() http.Handler {
 	// if it was false, it would call CreateTemplateCache() and use the wrong pathToTemplates
 	app.UseCache = true
 
-	render.NewTemplates(&app)
+	render.NewRenderer(&app)
 
 	db, err := driver.DBConnect(URL)
 	if err != nil {
