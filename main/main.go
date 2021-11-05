@@ -9,6 +9,7 @@ import (
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/andkolbe/chirper-go/internal/config"
+	"github.com/andkolbe/chirper-go/internal/config/helpers"
 	"github.com/andkolbe/chirper-go/internal/driver"
 	"github.com/andkolbe/chirper-go/internal/env"
 	"github.com/andkolbe/chirper-go/internal/handlers"
@@ -20,6 +21,9 @@ import (
 var app config.AppConfig
 
 var session *scs.SessionManager
+
+var infoLog *log.Logger
+var errorLog *log.Logger
 
 func main() {
 	PORT, err := run()
@@ -51,6 +55,13 @@ func run() (string, error) {
 	// change this to true when in production
 	app.InProduction = false
 
+	// os.Stdout writes to the console
+	infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	app.InfoLog = infoLog
+
+	errorLog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	app.ErrorLog = errorLog
+
 	// initialize session
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour
@@ -70,9 +81,6 @@ func run() (string, error) {
 	// store the template cache in an instance of the AppConfig
 	app.TemplateCache = templateCache
 
-	// gives our render package access to everything inside of AppConfig  (it needs the template cache we initialized here)
-	render.NewTemplates(&app)
-
 	// connect to db
 	db, err := driver.DBConnect(URL)
 	if err != nil {
@@ -83,6 +91,11 @@ func run() (string, error) {
 	repo := handlers.NewRepo(models.DBModel{DB: db}, &app)
 	// gives our handlers package access to everything inside of AppConfig 
 	handlers.NewHandlers(repo)
+
+	// gives our render package access to everything inside of AppConfig  (it needs the template cache we initialized here)
+	render.NewTemplates(&app)
+
+	helpers.NewHelpers(&app)
 
 	return PORT, nil
 }
