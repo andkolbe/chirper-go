@@ -3,10 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
+	"github.com/andkolbe/chirper-go/internal/config/helpers"
 	"github.com/andkolbe/chirper-go/internal/models"
 	"github.com/gorilla/mux"
 )
@@ -15,8 +15,7 @@ import (
 func (repo *Repository) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 	users, err := repo.dbmodel.GetAllUsers()
 	if err != nil {
-		log.Println(err)
-		http.Error(w, http.StatusText(500), 500)
+		helpers.ServerError(w, err)		
 		return
 	}
 
@@ -42,8 +41,7 @@ func (repo *Repository) GetUserByIDHandler(w http.ResponseWriter, r *http.Reques
 
 	user, err := repo.dbmodel.GetUserByID(id)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, http.StatusText(500), 500)
+		helpers.ServerError(w, err)
 		return
 	}
 

@@ -3,10 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
+	"github.com/andkolbe/chirper-go/internal/config/helpers"
 	"github.com/andkolbe/chirper-go/internal/forms"
 	"github.com/andkolbe/chirper-go/internal/models"
 	"github.com/andkolbe/chirper-go/internal/render"
@@ -17,8 +17,7 @@ import (
 func (repo *Repository) GetAllChirpsHandler(w http.ResponseWriter, r *http.Request) {
 	chirps, err := repo.dbmodel.GetAllChirps()
 	if err != nil {
-		log.Println(err)
-		http.Error(w, http.StatusText(500), 500)
+		helpers.ServerError(w, err)
 		return
 	}
 
@@ -37,8 +36,7 @@ func (repo *Repository) GetChirpByIDHandler(w http.ResponseWriter, r *http.Reque
 
 	chirp, err := repo.dbmodel.GetChirpByID(id)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, http.StatusText(500), 500)
+		helpers.ServerError(w, err)
 		return
 	}
 
@@ -50,7 +48,8 @@ func (repo *Repository) GetChirpByIDHandler(w http.ResponseWriter, r *http.Reque
 func (repo *Repository) PostNewChirpHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		log.Println(err)
+		helpers.ServerError(w, err)
+		return
 	}
 
 	chirp := models.Chirp{

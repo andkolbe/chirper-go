@@ -51,14 +51,7 @@ func (repo *Repository) HomePage(w http.ResponseWriter, r *http.Request) {
 
 // About Page
 func (repo *Repository) AboutPage(w http.ResponseWriter, r *http.Request) {
-	// perform some logic
-	stringMap := map[string]string{}
-	stringMap["test"] = "Hello, again"
-
-	// send data to the template
-	render.Template(w, r, "about.page.html", &models.TemplateData{
-		StringMap: stringMap,
-	})
+	render.Template(w, r, "about.page.html", &models.TemplateData{})
 }
 
 // Show One Chirp Page
@@ -89,8 +82,7 @@ func (repo *Repository) ChirpSummary(w http.ResponseWriter, r *http.Request) {
 	// pull the data called "chirp" out of the session and type assert it to type models.Chirp
 	chirp, ok := repo.App.Session.Get(r.Context(), "chirp").(models.Chirp)
 	if !ok {
-		log.Println("cannot get item from session")
-		// put a error message into the session
+		repo.App.ErrorLog.Println("Can't get error from session")
 		repo.App.Session.Put(r.Context(), "error", "can't get chirp from session")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
