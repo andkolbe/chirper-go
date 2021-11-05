@@ -3,10 +3,12 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/andkolbe/chirper-go/internal/config/helpers"
+	"github.com/andkolbe/chirper-go/internal/forms"
 	"github.com/andkolbe/chirper-go/internal/models"
 	"github.com/gorilla/mux"
 )
@@ -118,15 +120,44 @@ func (repo *Repository) DeleteUserHandler(w http.ResponseWriter, r *http.Request
 
 // Login
 func (repo *Repository) Login(w http.ResponseWriter, r *http.Request) {
-	var user models.User
-	json.NewDecoder(r.Body).Decode(&user)
+	// renew the session on every login/logout to prevent session fixation attack
+	_ = repo.App.Session.RenewToken(r.Context())
 
-	id := repo.dbmodel.AuthenticateUser(user.Email, user.Password)
-
-	res := response {
-		ID: int64(id),
-		Message: "Logged in successfully!",
+	err := r.ParseForm()
+	if err != nil {
+		log.Println(err)
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(res)
+
+	// make sure our form has the necessary parameters
+	form := forms.New(r.PostForm)
+	form.Required("email", "password")
+	if !form.Valid() {
+		// TODO - take user back to page
+	}
+
+	// var user models.User
+	// json.NewDecoder(r.Body).Decode(&user)
+
+	email := r.Form.Get("email")
+	password := r.Form.Get("password")
+
+	id, err := repo.dbmodel.AuthenticateUser(email, password)
+	if err != nil {
+		log.Println(err)
+		repo.App.Session.Put(r.Context(), "error", "Invalid login credentials")
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return 
+	}
+
+	// res := response {
+	// 	ID: int64(id),
+	// 	Message: "Logged in successfully!",
+	// }
+	// w.Header().Set("Content-Type", "application/json")
+	// json.NewEncoder(w).Encode(res)
+
+	// put the user in the session
+	repo.App.Session.Put(r.Context(), "user_id", id)
+	repo.App.Session.Put(r.Context(), "flash", "Logged in successfully")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

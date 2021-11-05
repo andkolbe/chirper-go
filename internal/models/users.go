@@ -148,23 +148,23 @@ func (m DBModel) DeleteUser(id string) int64 {
 }
 
 // Authenticate User
-func (m DBModel) AuthenticateUser(email, password string) int {
+func (m DBModel) AuthenticateUser(email, password string) (int, error) {
 	var id int 
 	var hashedPassword string 
 
 	row := m.DB.QueryRow("SELECT id, password FROM users WHERE email = ?", email)
 	err := row.Scan(&id, &hashedPassword)
 	if err != nil {
-		log.Fatal(err)
+		return id, err
 	}
 
 	match, err := argon2id.ComparePasswordAndHash(password, hashedPassword)
 	if err != nil {
-		log.Fatal(err)
+		return 0, err
 	}
 	if !match {
 		log.Panicln("incorrect password")
 	} 
 
-	return id
+	return id, nil
 }

@@ -102,5 +102,7 @@ func (repo *Repository) ChirpSummary(w http.ResponseWriter, r *http.Request) {
 
 // Login Page
 func (repo *Repository) LoginPage(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, r, "login.page.html", &models.TemplateData{})
+	render.Template(w, r, "login.page.html", &models.TemplateData{
+		Form: forms.New(nil),
+	})
 }

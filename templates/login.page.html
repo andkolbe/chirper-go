@@ -2,7 +2,7 @@
 
 {{define "content"}}
     
-    <form class="form-group border p-4 shadow bg-white " action="/chirps/new" method="POST" novalidate>
+    <form class="form-group border p-4 shadow bg-white " action="/login" method="POST" novalidate>
         <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
 
         <h2>Login</h2>
