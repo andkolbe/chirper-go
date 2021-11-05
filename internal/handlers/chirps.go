@@ -64,7 +64,7 @@ func (repo *Repository) PostNewChirpHandler(w http.ResponseWriter, r *http.Reque
 
 	// checks on form fields we created the forms package
 	form.Required("userid", "content", "location")
-	form.MinLength("content", 5, r)
+	form.MinLength("content", 5)
 
 	if !form.Valid() {
 		// data comes from models.templatedata

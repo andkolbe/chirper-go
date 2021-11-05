@@ -2,7 +2,6 @@ package forms
 
 import (
 	"fmt"
-	"net/http"
 	"net/url"
 	"strings"
 
@@ -11,7 +10,7 @@ import (
 
 // holds all of the information associated with the form both when it is initialized and after the form is submitted
 type Form struct {
-	url.Values
+	url.Values // the data that gets passed to the form
 	Errors errors
 }
 
@@ -43,15 +42,15 @@ func (f *Form) Required(fields ...string) {
 }
 
 // checks that the form field is included in the request
-func (f *Form) Has(field string, r *http.Request) bool {
-	formField := r.Form.Get(field)
+func (f *Form) Has(field string) bool {
+	formField := f.Get(field)
 
 	return formField != ""
 }
 
 // checks that the form field has a min length
-func (f *Form) MinLength(field string, length int, r *http.Request) bool {
-	formField := r.Form.Get(field)
+func (f *Form) MinLength(field string, length int) bool {
+	formField := f.Get(field)
 
 	if len(formField) < length {
 		f.Errors.Add(field, fmt.Sprintf("This field must be at least %d characters long", length))
