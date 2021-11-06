@@ -3,12 +3,13 @@ package main
 import (
 	"net/http"
 
+	"github.com/andkolbe/chirper-go/internal/helpers"
 	"github.com/justinas/nosurf"
 )
 
-// Even though CSRF is a prominent vulnerability, Go's web-related package infrastructure mostly consists of micro-frameworks that neither do implement CSRF 
+// Even though CSRF is a prominent vulnerability, Go's web-related package infrastructure mostly consists of micro-frameworks that neither do implement CSRF
 // checks, nor should they
-// nosurf solves this problem by providing a CSRFHandler that wraps your http.Handler and checks for CSRF attacks on every non-safe (non-GET/HEAD/OPTIONS/TRACE) 
+// nosurf solves this problem by providing a CSRFHandler that wraps your http.Handler and checks for CSRF attacks on every non-safe (non-GET/HEAD/OPTIONS/TRACE)
 // method
 
 // nosurf is an HTTP package for Go that helps you prevent Cross-Site Request Forgery attacks
@@ -30,6 +31,19 @@ func SessionLoad(next http.Handler) http.Handler {
 	return session.LoadAndSave(next)
 }
 
+// protects routes to ensure that only people who are logged in have access to the routes that we want them to see
+func Auth(next http.Handler) http.Handler {
+	// needs to have access to the request
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !helpers.IsAuthenticated(r) {
+			session.Put(r.Context(), "error", "Log in First!")
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return 
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+ 
 
 /*
 	What are CSRF Tokens?

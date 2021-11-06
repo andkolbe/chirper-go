@@ -10,6 +10,7 @@ import (
 	"github.com/andkolbe/chirper-go/internal/config/helpers"
 	"github.com/andkolbe/chirper-go/internal/forms"
 	"github.com/andkolbe/chirper-go/internal/models"
+	"github.com/andkolbe/chirper-go/internal/render"
 	"github.com/gorilla/mux"
 )
 
@@ -130,9 +131,14 @@ func (repo *Repository) Login(w http.ResponseWriter, r *http.Request) {
 
 	// make sure our form has the necessary parameters
 	form := forms.New(r.PostForm)
+	// use the server side validation we wrote in the forms package
 	form.Required("email", "password")
+	form.IsEmail("email")
 	if !form.Valid() {
-		// TODO - take user back to page
+		render.Template(w, r, "login.page.html", &models.TemplateData{
+			Form: form,
+		})
+		return 
 	}
 
 	// var user models.User
