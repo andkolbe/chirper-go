@@ -9,7 +9,7 @@ import (
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/andkolbe/chirper-go/internal/config"
-	"github.com/andkolbe/chirper-go/internal/config/helpers"
+	"github.com/andkolbe/chirper-go/internal/helpers"
 	"github.com/andkolbe/chirper-go/internal/driver"
 	"github.com/andkolbe/chirper-go/internal/env"
 	"github.com/andkolbe/chirper-go/internal/handlers"

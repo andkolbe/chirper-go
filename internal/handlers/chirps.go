@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/andkolbe/chirper-go/internal/config/helpers"
+	"github.com/andkolbe/chirper-go/internal/helpers"
 	"github.com/andkolbe/chirper-go/internal/forms"
 	"github.com/andkolbe/chirper-go/internal/models"
 	"github.com/andkolbe/chirper-go/internal/render"

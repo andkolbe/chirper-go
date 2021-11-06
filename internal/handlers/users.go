@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/andkolbe/chirper-go/internal/config/helpers"
+	"github.com/andkolbe/chirper-go/internal/helpers"
 	"github.com/andkolbe/chirper-go/internal/forms"
 	"github.com/andkolbe/chirper-go/internal/models"
 	"github.com/andkolbe/chirper-go/internal/render"
@@ -165,5 +165,12 @@ func (repo *Repository) Login(w http.ResponseWriter, r *http.Request) {
 	// put the user in the session
 	repo.App.Session.Put(r.Context(), "user_id", id)
 	repo.App.Session.Put(r.Context(), "flash", "Logged in successfully")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func (repo *Repository) Logout(w http.ResponseWriter, r *http.Request) {
+	_ = repo.App.Session.Destroy(r.Context())
+	_ = repo.App.Session.RenewToken(r.Context())
+
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

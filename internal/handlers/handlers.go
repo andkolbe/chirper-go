@@ -106,3 +106,7 @@ func (repo *Repository) LoginPage(w http.ResponseWriter, r *http.Request) {
 		Form: forms.New(nil),
 	})
 }
+
+func (repo *Repository) ProfilePage(w http.ResponseWriter, r *http.Request) {
+	render.Template(w, r, "profile.page.html", &models.TemplateData{})
+}
